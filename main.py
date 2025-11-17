@@ -54,28 +54,55 @@ class Main():
     def run(self):
         while self.game_is_running:
             self.check_event()
-            self.update_player()
+            self.update_player2()
             self.clock.tick(60)
             self.update_screen()
 
     def check_tile(self, x, y, dir=None, layer=1):
+        size = self.tile_size
+        x = (x + size // 2) // size
+        y = (y + size // 2) // size
         if dir == None:
-            margin = 0
+            return self.try_get_prop(x, y, layer)
         elif dir == 'right':
-            margin = + self.tile_size // 8
+            x = (x + 4 + size // 2)
+        elif dir == 'left':
+            x = (x + 4) // size
+        elif dir == 'up':
+            y = (y + 4) // size
+        elif dir == 'down':
+            (y + 4 + size // 2) // size
 
-        center_x = (x + self.tile_size // 2) // self.tile_size
-        center_y = (y + self.tile_size // 2) // self.tile_size
-
+        return self.try_get_prop(x, y, layer)
 
     def update_player(self):
         x = self.player.rect.x
         y = self.player.rect.y
+        layer = 1
+        can_move_right = True
+        can_move_left = True
+        can_move_up = True
+        can_move_down = True 
+        can_move_right = self.check_tile(x, y, 'right', layer)['collide'] == 1
+        can_move_left = self.check_tile(x, y, 'left', layer)['collide'] == 1
+        can_move_up = self.check_tile(x, y, 'up', layer)['collide'] == 1
+        can_move_down = self.check_tile(x, y, 'down', layer)['collide'] == 1
+        if self.player.moving_right:
+            self.player.moving_right = not can_move_right
+        if self.player.moving_left:
+            self.player.moving_left = not can_move_left
+        if self.player.moving_up:
+            self.player.moving_up = not can_move_up
+        if self.player.moving_down:
+            self.player.moving_down = not can_move_down
+        self.player.update()
+
+
+    def update_player2(self):
+        x = self.player.rect.x
+        y = self.player.rect.y
         size = self.tile_size
         layer = 1
-        center_x = (x + size // 2) // size
-        center_y = (y + size // 2) // size
-        # left_tile = self.check_tile(self.player.rect.x, self.player.rect.y, 'left', layer)
         right_pos = (
             (x + 4 + size // 2) // size,
             (y + size // 2) // size
@@ -149,7 +176,6 @@ class Main():
             if i == 0:
                 self.blit_map_tile(layer, i)
             elif i == 1:
-            
                 self.blit_map_tile(layer, i)
             # elif i == 2:
             #     if self.counter > 30:
@@ -157,7 +183,6 @@ class Main():
         self.counter = self.counter + 1 if self.counter < 60 else 0
 
     def blit_map_tile(self, layer, index):
-        
         for tile in layer.tiles():
             x_pixel = tile[0] * 16
             y_pixel = tile[1] * 16
@@ -167,8 +192,6 @@ class Main():
             if y_pixel <= self.player.rect.y:
                 self.screen.blit(tile[2], (x_pixel, y_pixel))
                 
-
-
     def check_event(self):
         for event in pygame.event.get():
             keys = pygame.key.get_pressed()
