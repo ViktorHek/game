@@ -66,3 +66,4 @@ class StartScreen:
         self.right_box.fill((200, 0,0))
         self.right_box.set_alpha(50)
         self.screen.blit(self.right_box, (202, 60))
+        self.screen.blit(self.check_box.image, self.check_box.rect)

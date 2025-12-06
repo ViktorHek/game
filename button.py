@@ -64,5 +64,6 @@ class CheckBox(Button):
         surf.blit(self.end, self.end_rect)
         return surf
     
-    # draw_button
+    # def draw_button(self):
+
     # update
