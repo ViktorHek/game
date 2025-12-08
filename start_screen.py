@@ -1,6 +1,6 @@
 import pygame
 
-from button import Button, CheckBox
+from button import Button, CheckBox, CheckBoxList
 from animation import Animation, AnimationIndex
 from font import Text, Title
 from book import Book
@@ -28,20 +28,26 @@ class StartScreen:
         self.text = Text('test', (350, 200), has_underline=True)
         self.text_2 = Text('testing longer word, jwoefhweofhwoi', (350, 250), has_underline=True)
         self.book = Book(self)
-        self.check_box = CheckBox(
-            self.game, "munk", "Munk", 
-            (672, 60 + 365/2), 
-            290
+        self.right_page = pygame.Rect((534, 90),(270, 358))
+        self.check_box_list = CheckBoxList(
+            self.game, self.right_page,
+            [
+                {"id":"munk", "text":"Munk"},
+                {"id":"cleric", "text":"Cleric"},
+                {"id":"priest", "text":"Priest"},
+            ] 
         )
+        # self.check_box = CheckBox(self.game, "munk", "Munk", self.right_page)
         
 
     def generate_buttons(self):
         buttons = ['New Game', 'Load Game', 'Options']
-        x, y = self.screen_rect.center
-        y -= 70
+        dummy = Button(self.game, 1337, "dummy", pygame.Rect(10,10,10,10))
+        box = dummy.image.get_rect(center=self.screen_rect.center)
+        box.y -= 70
         for i, button in enumerate(buttons):
-            self.game.buttons.add(Button(self.game, i + 1, button, (x,y)))
-            y += 70
+            self.game.buttons.add(Button(self.game, i + 1, button, box))
+            box.y += 70
 
     def blitme(self):
         fade = pygame.Surface((self.width, self.height))
@@ -60,11 +66,5 @@ class StartScreen:
             self.animation.blitme(self.game.screen)
             if self.animation.animation_is_done:
                 self.title.blitme(self.screen)
-        # self.right_box.fill((200, 0,0))
-        # self.right_box.set_alpha(50)
-        # self.screen.blit(self.right_box, (self.screen_rect.width / 2 + 20, 60))
-        # self.right_box.fill((200, 0,0))
-        # self.right_box.set_alpha(50)
-        # self.screen.blit(self.right_box, (202, 60))
-        # self.screen.blit(self.check_box.image, self.check_box.rect)
-        self.check_box.draw_button()
+        # self.check_box.draw_button()
+        self.check_box_list.draw_list()

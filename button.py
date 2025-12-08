@@ -3,8 +3,9 @@ from pygame.sprite import Sprite
 from font import Text
 
 class Button(Sprite):
-    def __init__(self, game, id, text, pos):
+    def __init__(self, game, id, text, parent):
         super().__init__()
+        pos = parent.center
         self.game = game
         self.screen = game.screen
         self.id = id
@@ -34,54 +35,63 @@ class Button(Sprite):
         else:
             return False
 
+class CheckBoxList():
+    def __init__(self, game, parent, list):
+        self.game = game
+        self.parent = parent
+        # self.box = parent
+        # self.box.height = 32
+        self.list = self.get_list(list)
+
+    def get_list(self, list):
+        arr = []
+        box = self.parent
+        box.height = 32
+        for i, button in enumerate(list):
+            arr.append(CheckBox(self.game, button["id"], button["text"], box))
+            box.y += 32
+        return arr
+    
+    def draw_list(self):
+        for button in self.list:
+            button.draw_button()
+        
 class CheckBox(Button):
-    def __init__(self, game, id, text, pos, width):
-        super().__init__(game, id, text, pos)
+    def __init__(self, game, id, text, parent):
+        super().__init__(game, id, text, parent)
         self.width = 280
         self.height = game.settings.tile_size
-        self.rect = pygame.Rect(
-            (pos[0] - self.width / 2, pos[1] - self.height / 2),
-            (self.width, self.height)
-        )
-        baseUrl = "assets/ui_sprites/Sprites/Content/"
-        img_array = (
-            baseUrl + "4 Buttons/Sliced/5.png",
-            baseUrl + "5 Holders/22.png",
-            baseUrl + "5 Holders/12.png",
-            baseUrl + "5 Holders/13.png",
-            baseUrl + "5 Holders/14.png",
-        )
-        self.images = [pygame.image.load(url) for url in img_array]
-        
-
-        self.arrow = pygame.image.load("assets/ui_sprites/Sprites/Content/4 Buttons/Sliced/5.png")
+        self.parent = parent
+        self.is_checked = False
+        self.is_active = False
         url = "assets/ui_sprites/Sprites/Content/5 Holders/"
+        self.arrow = pygame.transform.flip(pygame.image.load("assets/ui_sprites/Sprites/Content/4 Buttons/Sliced/5.png"), True, False)
         self.start = pygame.image.load(url + '9.png')
         self.middle = pygame.image.load(url + '10.png')
         self.end = pygame.image.load(url + '11.png')
         self.check_box_img = pygame.image.load(url + '22.png')
-        x = self.rect.top + self.height/2
-        y = left=self.rect.top
-        self.check_box_rect = self.check_box_img.get_rect(
-            top= self.rect.top + self.height/2, 
-            left=self.rect.top + self.height/2
-        )        
-        self.start_rect = self.start.get_rect()
-        self.middle_rect = self.middle.get_rect()
-        self.end_rect = self.end.get_rect()
-        self.end_rect.right = pos[1] + width/2
-        self.margin = 10
+        self.arrow_rect = self.arrow.get_rect(
+            left=parent.left, centery=parent.centery,
+        )
+        self.check_box_rect = self.check_box_img.get_rect( 
+            left = self.arrow_rect.right, centery=parent.centery,
+        )
+        self.start_rect = self.start.get_rect(
+            left = self.check_box_rect.right, centery=parent.centery,
+        )
+        self.end_rect = self.end.get_rect(
+            left=parent.right, centery=parent.centery
+        )
 
     def draw_button(self):
-        x = self.rect.left
-        y = self.rect.top
-        self.screen.blit(self.images[1], (x + 8, y + 8))
-        self.screen.blit(self.images[2], (x + self.game.settings.tile_size, y))
-        x += self.game.settings.tile_size + self.start_rect.width
-        while x < self.rect.left + self.width - self.middle_rect.width:
-            self.screen.blit(self.images[3], (x, y))
-            x += self.middle_rect.width
-        self.screen.blit(self.images[4], self.end.get_rect(right=self.rect.right, top=self.rect.top))
-        self.screen.blit(self.text.text, self.text.rect)
+        self.screen.blit(self.arrow, self.arrow_rect)
+        self.screen.blit(self.check_box_img, self.check_box_rect)
+        self.screen.blit(self.start, self.start_rect)
+        x = self.start_rect.right
+        y = self.start_rect.top
+        while x < self.parent.right:
+            self.screen.blit(self.middle, (x,y))
+            x += self.middle.get_width()
+        self.screen.blit(self.end, self.end_rect)
 
     # update
