@@ -55,6 +55,10 @@ class CheckBoxList():
             box.y += 32
         return arr
     
+    def update(self):
+        for btn in self.list:
+            btn.update()
+
     def check_click(self):
         for btn in self.list:
             id = btn.check_click()
@@ -100,6 +104,7 @@ class CheckBox(Button):
         self.end_rect = self.end.get_rect(
             left=parent.right, centery=parent.centery
         )
+        self.surf = pygame.Surface((100,100), pygame.SRCALPHA)
 
     def blitme(self):
         self.screen.blit(self.arrow, self.arrow_rect)
@@ -114,21 +119,17 @@ class CheckBox(Button):
 
     def check_click(self):
         pos = pygame.mouse.get_pos()
-        # print("#####")
-        # print(f"{self.rect.left} {self.rect.top} {self.rect.right} {self.rect.bottom} ")
-        # print("-----")
-        # print(pos)
-        # print("#####")
-        # if self.rect.collidepoint(pos) and self.game.game_pause:
-        #     return self.id
-        # else:
-        #     return False
         if self.check_collision(self.rect, pos):
             return self.id
         else:
             return False
 
-
     def check_collision(self, rect, pos):
         return rect.left <= pos[0] and rect.top <= pos[1] and rect.right >= pos[0] and rect.bottom >=pos[1]
         
+    def update(self):
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            self.image = pygame.transform.scale(self.img_active, self.wh)
+        else:
+            self.image = pygame.transform.scale(self.img_base, self.wh)

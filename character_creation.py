@@ -22,6 +22,9 @@ class CharacterCreation:
             ] 
         )
 
+    def update(self):
+        self.buttons.update()
+
     def blitme(self):
         self.screen.blit(self.bg, self.bg_rect)
         self.book.blitme(self.screen)

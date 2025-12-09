@@ -81,20 +81,8 @@ class Main():
             return 
         if self.character_creation_active:
             self.character_creation.handle_click()
-        #     for btn in self.character_creation.buttons.list:
-        #         id = btn.check_click()
-        #         print(id)
-        #         if id == 1:
-        #             self.character_creation_active = True
-        #         elif id == 2:
-        #             self.game_pause = False
         else:
-            for btn in self.start_screen.buttons:
-                id = btn.check_click()
-                if id == 1:
-                    self.character_creation_active = True
-                elif id == 2:
-                    self.game_pause = False
+            self.start_screen.handle_click()
 
 if __name__ == '__main__':
     game = Main()

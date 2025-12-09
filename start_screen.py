@@ -38,6 +38,15 @@ class StartScreen:
 
     def update(self):
         self.buttons.update()
+    
+    def handle_click(self):
+        for btn in self.buttons:
+            id = btn.check_click()
+            if id == 1:
+                self.game.character_creation_active = True
+            elif id == 2:
+                self.game.game_pause = False
+
 
     def blitme(self):
         self.screen.blit(self.fade, (0, 0))
