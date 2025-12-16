@@ -4,11 +4,17 @@ from button import CheckBoxList
 from font import Text, Title
 from book import Book
 from text_box import TextBox
+from pathlib import Path
+import json
 
 class CharacterCreation:
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
+        classes_path = Path("data/classes.json")
+        rases_path = Path("data/rases.json")
+        self.db_classes = json.loads(classes_path.read_text())
+        self.db_rases = json.loads(rases_path.read_text())
         self.bg = pygame.image.load('assets/ui_sprites/Sprites/Book Desk/3.png')
         self.bg_rect = self.bg.get_rect(center = game.screen_rect.center)
         self.book = Book(game)
