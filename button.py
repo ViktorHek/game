@@ -68,6 +68,7 @@ class CheckBoxList():
         self.game = game
         self.parent = parent
         self.list = self.get_list(list)
+        self.current = self.list[0].id
 
     def get_list(self, list):
         arr = []
@@ -85,7 +86,8 @@ class CheckBoxList():
     def check_click(self):
         for btn in self.list:
             id = btn.check_click()
-            # print(id)
+            if id:
+                self.current = id
 
     def draw_list(self, screen):
         for button in self.list:

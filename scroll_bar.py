@@ -13,7 +13,6 @@ class ScrollBar:
         self.render_image()
 
     def render_image(self):
-        print(self.rect)
         x = 0
         y = 0
         self.image.blit(self.start, (x,y))
