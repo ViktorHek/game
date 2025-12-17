@@ -18,6 +18,7 @@ class TextBox:
         self.images = self.get_box()
         self.render_box()
         self.image.blit(self.text.image, self.text.rect)
+        
 
     def update(self):
         self.text.update()

@@ -33,7 +33,7 @@ class Title(Text):
         self.image.blit(self.text, (rect.x, rect.y))
 
 class LongText(Text):
-    def __init__(self, text, parent, animated=False, size=20):
+    def __init__(self, text, parent, animated=False, size=18):
         super().__init__(text, parent, size, has_underline=True, centered=False)
         self.text_string = text
         self.animated = animated
