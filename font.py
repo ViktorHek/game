@@ -1,6 +1,17 @@
-from turtle import left
 import pygame
 import pygame.font
+
+def get_text_height(type="text"):
+    if type == "text":
+        size = 20
+    elif type == "small title":
+        size = 26
+    elif type == "title":
+        size = 42
+    else:
+        size = 20
+    f = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
+    return f.render("Dummy text", True, (0,0,0)).convert_alpha().get_height()
 
 class Text:
     def __init__(self, text, parent, size=20, has_underline=False, centered=True):
@@ -10,17 +21,27 @@ class Text:
         self.parent = parent
         self.text_color = (13, 141, 103)
         self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
-        self.under_line_img = pygame.image.load('assets/ui_sprites/Sprites/Content/5 Holders/20_2.png')
-        self.text = self.font.render(text, True, self.text_color)
-        self.text_rect = self.text.get_rect(center=parent.center)
-        self.image = pygame.Surface((self.text_rect.width, self.text_rect.height), pygame.SRCALPHA)
-        rect = self.text.get_rect(center=self.image.get_rect().center)
-        self.image.blit(self.text, (rect.x, rect.y))
+        self.under_line_img = pygame.image.load('assets/ui_sprites/Sprites/Content/5 Holders/20_2.png').convert_alpha()
+        self.text = self.font.render(text, True, self.text_color).convert_alpha()
+        self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA)
+        self.text_rect = self.text.get_rect(center=self.image.get_rect().center)
+        self.image.blit(self.text, (self.text_rect.x, self.text_rect.y))
         if centered:
             self.rect = self.text.get_rect(center=parent.center)
         else: 
             self.rect = self.text.get_rect(left = parent.left, top = parent.top)
-    
+        if has_underline:
+            self.render_underline()
+
+    def render_underline(self):
+        x = 0
+        y = self.image.get_height() - self.under_line_img.get_height()
+        max_length = self.text_rect.width
+        while x < max_length - self.under_line_img.get_width() - 5:
+            self.image.blit(self.under_line_img, (x,y))
+            x += self.under_line_img.get_width()
+        self.image.blit(self.under_line_img, (max_length - self.under_line_img.get_width(), y))
+
     def blitme(self, screen):
         screen.blit(self.text, self.rect)
 
@@ -29,10 +50,21 @@ class Title(Text):
         super().__init__(text, parent, size, has_underline, centered=True)
         self.font = pygame.font.Font('assets/font/Blackwood Castle.ttf', size)
         self.text = self.font.render(text, True, self.text_color)
+        self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA)
+        rect = self.text.get_rect(center=self.image.get_rect().center)
+        self.image.blit(self.text, (rect.x, rect.y))
 
+class SmallTitle(Text):
+    def __init__(self, text, parent, size=26, centered=True):
+        super().__init__(text, parent, size, centered=centered, has_underline=True)
+        self.under_line_img = pygame.image.load("assets/ui_sprites/Sprites/Content/5 Holders/19.png").convert_alpha()
+        self.image = pygame.Surface((self.text.get_width(), self.text.get_height() + self.under_line_img.get_height() - 8), pygame.SRCALPHA)
+        self.under_line_img_rect = self.under_line_img.get_rect(centerx=self.image.get_rect().centerx, bottom=self.image.get_rect().bottom)
+        self.image.blit(self.text, self.text_rect)
+        self.image.blit(self.under_line_img, self.under_line_img_rect)
 
 class LongText(Text):
-    def __init__(self, text, parent, animated=False, size=20):
+    def __init__(self, text, parent, animated=False, size=18):
         super().__init__(text, parent, size, has_underline=True, centered=False)
         self.text_string = text
         self.animated = animated

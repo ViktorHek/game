@@ -12,12 +12,13 @@ class TextBox:
         self.src = py.image.load("assets/ui_sprites/SpriteSheet/Folding & Cutout Paper UI SpriteSheet.png")
         self.size = (32,32)
         self.text_container = py.Rect((4, 4), (parent.width - 32 - 8, 10))
-        self.text = LongText(text, self.text_container, animated=True)
+        self.text = LongText(text, self.text_container, animated=False)
         self.image = py.Surface((self.width, self.text.rect.height), py.SRCALPHA)
         self.rect = self.image.get_rect(x=parent.x + 16, y=parent.y)
         self.images = self.get_box()
         self.render_box()
         self.image.blit(self.text.image, self.text.rect)
+        
 
     def update(self):
         self.text.update()
@@ -106,5 +107,5 @@ class TextBox:
         }
         return dic
 
-    def blitme(self):
-        self.game.screen.blit(self.image, self.rect)
+    def blitme(self, screen):
+        screen.blit(self.image, self.rect)

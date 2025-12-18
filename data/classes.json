@@ -1,0 +1,497 @@
+{
+  "earth_bound": {
+    "name": "Earth Bound",
+    "hit_die": 8,
+    "proficiency_choices": [
+      {
+        "choose": 2,
+        "options": [
+          "arcana",
+          "animal handling",
+          "insight",
+          "medicine",
+          "nature",
+          "perception",
+          "religion",
+          "survival"
+        ]
+      }
+    ],
+    "saving_throws": ["int", "wis"],
+    "god": "mother earth",
+    "primary_skill": "wisdom",
+    "secondary_skill": "intelligence",
+    "subclasses": [
+      {
+        "name": "land"
+      }
+    ],
+    "spellcasting_ability": "wis",
+    "desc": "The Earth Bound worship \"Mother Earth\". They vow to help animals, plants and the earth itself. In return they get the ability to control the earth and transform themselves into a variety of animals",
+    "levels": [
+      {
+        "level": 0,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 1,
+        "ability": ["druidic", "preparing spells", "ritual casting"],
+        "ability_score_improvement": false,
+        "spell_slots": [2, 2]
+      },
+      {
+        "level": 2,
+        "ability": ["wild shape 1", "sub class 1", "wild companion"],
+        "ability_score_improvement": false,
+        "spell_slots": [2, 3]
+      },
+      {
+        "level": 3,
+        "ability": ["sub class 1"],
+        "ability_score_improvement": false,
+        "spell_slots": [2, 4, 2]
+      },
+      {
+        "level": 4,
+        "ability": ["wild shape 2"],
+        "ability_score_improvement": true,
+        "spell_slots": [3, 4, 3]
+      },
+      {
+        "level": 5,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 4, 3, 2]
+      },
+      {
+        "level": 6,
+        "ability": ["sub class 2"],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 4, 3, 3]
+      },
+      {
+        "level": 7,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 4, 3, 3, 1]
+      },
+      {
+        "level": 8,
+        "ability": ["wild shape 3"],
+        "ability_score_improvement": true,
+        "spell_slots": [3, 4, 3, 3, 2]
+      },
+      {
+        "level": 9,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 4, 3, 3, 3, 1]
+      },
+      {
+        "level": 10,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 4, 3, 3, 3, 2]
+      }
+    ]
+  },
+  "fighter": {
+    "name": "Fighter",
+    "hit_die": 10,
+    "proficiency_choices": [
+      {
+        "choose": 2,
+        "options": [
+          "acrobatics",
+          "animal handling",
+          "athletics",
+          "history",
+          "insight",
+          "intimidation",
+          "perception",
+          "survival"
+        ]
+      }
+    ],
+    "saving_throws": ["str", "con"],
+    "god": "Fighter",
+    "primary_skill": "strength",
+    "secondary_skill": "constitution",
+    "subclasses": [
+      {
+        "name": "archer"
+      }
+    ],
+    "spellcasting_ability": "",
+    "desc": "x",
+    "levels": [
+      {
+        "level": 0,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 1,
+        "ability": ["fighting style", "second wind"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 2,
+        "ability": ["action surge 1"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 3,
+        "ability": ["sub class 1"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 4,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": []
+      },
+      {
+        "level": 5,
+        "ability": ["extra attack 1"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 6,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": []
+      },
+      {
+        "level": 7,
+        "ability": ["sub class 2"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 8,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": []
+      },
+      {
+        "level": 9,
+        "ability": ["indomitable 1"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 10,
+        "ability": ["sub class 3"],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      }
+    ]
+  },
+  "barbarian": {
+    "name": "Barbarian",
+    "hit_die": 12,
+    "proficiency_choices": [
+      {
+        "choose": 2,
+        "options": [
+          "animal handling",
+          "athletics",
+          "intimidation",
+          "nature",
+          "perception",
+          "survival"
+        ]
+      }
+    ],
+    "saving_throws": ["str", "con"],
+    "god": "Fighter",
+    "primary_skill": "strength",
+    "secondary_skill": "constitution",
+    "subclasses": [
+      {
+        "name": "archer"
+      }
+    ],
+    "spellcasting_ability": "",
+    "desc": "x",
+    "levels": [
+      {
+        "level": 0,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 1,
+        "ability": ["rage", "unarmored defense"],
+        "ability_score_improvement": false,
+        "spell_slots": [2, 2]
+      },
+      {
+        "level": 2,
+        "ability": ["reckless attack", "danger sense"],
+        "ability_score_improvement": false,
+        "spell_slots": [2, 2]
+      },
+      {
+        "level": 3,
+        "ability": ["primal path 1", "primal knowledge"],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 2]
+      },
+      {
+        "level": 4,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": [3, 2]
+      },
+      {
+        "level": 5,
+        "ability": ["extra attack 1", "fast movement"],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 2]
+      },
+      {
+        "level": 6,
+        "ability": ["primal path 2"],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 2]
+      },
+      {
+        "level": 7,
+        "ability": ["feral instinct", "instinctive pounce"],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 2]
+      },
+      {
+        "level": 8,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": [4, 2]
+      },
+      {
+        "level": 9,
+        "ability": ["brutal critical"],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 3]
+      },
+      {
+        "level": 10,
+        "ability": ["primal path 10"],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 3]
+      }
+    ]
+  },
+  "wizard": {
+    "name": "Wizard",
+    "hit_die": 6,
+    "proficiency_choices": [
+      {
+        "choose": 2,
+        "options": [
+          "arcana",
+          "history",
+          "insight",
+          "investigation",
+          "medicine",
+          "religion"
+        ]
+      }
+    ],
+    "saving_throws": ["int", "wis"],
+    "god": "Fighter",
+    "primary_skill": "intelligence",
+    "secondary_skill": "wisdom",
+    "subclasses": [
+      {
+        "name": "archer"
+      }
+    ],
+    "spellcasting_ability": "int",
+    "desc": "x",
+    "levels": [
+      {
+        "level": 0,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 1,
+        "ability": ["arcane recovery", "preparing spells", "ritual casting"],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 2]
+      },
+      {
+        "level": 2,
+        "ability": ["sub class 1"],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 3]
+      },
+      {
+        "level": 3,
+        "ability": ["cantrip formulas"],
+        "ability_score_improvement": false,
+        "spell_slots": [3, 4, 2]
+      },
+      {
+        "level": 4,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": [4, 4, 3]
+      },
+      {
+        "level": 5,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 4, 3, 2]
+      },
+      {
+        "level": 6,
+        "ability": ["sub class 2"],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 4, 3, 3]
+      },
+      {
+        "level": 7,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 4, 3, 3, 1]
+      },
+      {
+        "level": 8,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": [4, 4, 3, 3, 2]
+      },
+      {
+        "level": 9,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": [4, 4, 3, 3, 3, 1]
+      },
+      {
+        "level": 10,
+        "ability": ["sub class 3"],
+        "ability_score_improvement": false,
+        "spell_slots": [5, 4, 3, 3, 3, 2]
+      }
+    ]
+  },
+  "xxx": {
+    "name": "Fighter",
+    "hit_die": 8,
+    "proficiency_choices": [
+      {
+        "choose": 2,
+        "options": [
+          "acrobatics",
+          "animal handling",
+          "arcana",
+          "athletics",
+          "deception",
+          "history",
+          "insight",
+          "intimidation",
+          "investigation",
+          "medicine",
+          "nature",
+          "perception",
+          "persuasion",
+          "religion",
+          "sleight of hand",
+          "stealth",
+          "survival"
+        ]
+      }
+    ],
+    "saving_throws": ["str", "con"],
+    "god": "x",
+    "primary_skill": "intelligence",
+    "secondary_skill": "wisdom",
+    "subclasses": [
+      {
+        "name": "archer"
+      }
+    ],
+    "spellcasting_ability": "",
+    "desc": "x",
+    "levels": [
+      {
+        "level": 0,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 1,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 2,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 3,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 4,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": []
+      },
+      {
+        "level": 5,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 6,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 7,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 8,
+        "ability": [],
+        "ability_score_improvement": true,
+        "spell_slots": []
+      },
+      {
+        "level": 9,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      },
+      {
+        "level": 10,
+        "ability": [],
+        "ability_score_improvement": false,
+        "spell_slots": []
+      }
+    ]
+  }
+}

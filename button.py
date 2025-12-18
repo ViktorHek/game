@@ -1,13 +1,15 @@
 import pygame
 from pygame.sprite import Sprite
 from font import Text
+from tool_tip import ToolTip
 
 class Button(Sprite):
-    def __init__(self, game, id, text, parent):
+    def __init__(self, game, id, text, parent, value, tool_tip=""):
         super().__init__()
         self.game = game
         self.screen = game.screen
         self.id = id
+        self.value = value
         self.is_hover = False
         self.is_checked = False
         self.is_selected = False
@@ -27,12 +29,21 @@ class Button(Sprite):
         self.text = Text(text, self.surf.get_rect())
         self.surf.blit(self.text.image, self.text.rect)
         self.surf_active.blit(self.text.image, self.text.rect)
+        self.has_tool_tip = len(tool_tip) > 0
+        if self.has_tool_tip:
+            self.tool_tip = ToolTip(game, tool_tip, self.rect)
 
-    def blitme(self):
+    def blitme(self, screen):
         if self.is_hover:
-            self.screen.blit(self.surf_active, self.rect)
+            screen.blit(self.surf_active, self.rect)
         else:
-            self.screen.blit(self.surf, self.rect)
+            screen.blit(self.surf, self.rect)
+        # if self.has_tool_tip and self.rect.collidepoint(pygame.mouse.get_pos()):
+        #     self.tool_tip.update()
+        
+    def blit_tool_tip(self, screen):
+        if self.has_tool_tip and self.rect.collidepoint(pygame.mouse.get_pos()):
+            self.tool_tip.blitme(screen)
 
     def update(self):
         pos = pygame.mouse.get_pos()
@@ -43,7 +54,7 @@ class Button(Sprite):
 
     def check_click(self):
         pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos) and self.game.game_pause:
+        if self.rect.collidepoint(pos):
             self.is_checked = True
             self.is_selected = True
             return self.id
@@ -57,13 +68,14 @@ class CheckBoxList():
         self.game = game
         self.parent = parent
         self.list = self.get_list(list)
+        self.current = self.list[0].id
 
     def get_list(self, list):
         arr = []
         box = self.parent.copy()
         box.height = 32
-        for i, button in enumerate(list):
-            arr.append(CheckBox(self.game, button["id"], button["text"], box))
+        for button in list:
+            arr.append(CheckBox(self.game, button["id"], button["text"], box, button["value"]))
             box.y += 32
         return arr
     
@@ -72,17 +84,21 @@ class CheckBoxList():
             btn.update()
 
     def check_click(self):
+        val = False
         for btn in self.list:
             id = btn.check_click()
-            print(id)
+            if id:
+                self.current = id
+                val = btn.value
+        return val
 
-    def draw_list(self):
+    def draw_list(self, screen):
         for button in self.list:
-            button.blitme()
+            button.blitme(screen)
         
 class CheckBox(Button):
-    def __init__(self, game, id, text, parent):
-        super().__init__(game, id, text, parent)
+    def __init__(self, game, id, text, parent, value=None, tool_tip=""):
+        super().__init__(game, id, text, parent, value, tool_tip)
         # self.width = 280
         self.height = game.settings.tile_size
         self.surf = pygame.Surface((parent.width, parent.height), pygame.SRCALPHA)
@@ -124,12 +140,12 @@ class CheckBox(Button):
         self.surf_active.blit(end, end.get_rect(right = self.container.right))
         self.surf_active.blit(self.text.text, self.text.rect)
 
-    def blitme(self):
+    def blitme(self, screen):
         if self.is_hover:
-            self.screen.blit(self.surf_active, self.rect)
+            screen.blit(self.surf_active, self.rect)
         else:
-            self.screen.blit(self.surf, self.rect)
+            screen.blit(self.surf, self.rect)
         if self.is_checked:
-            self.screen.blit(self.check_img, self.check_img_rect)
+            screen.blit(self.check_img, self.check_img_rect)
         if self.is_selected:
-            self.screen.blit(self.arrow, self.arrow_rect)
+            screen.blit(self.arrow, self.arrow_rect)
