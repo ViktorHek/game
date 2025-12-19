@@ -28,6 +28,12 @@ class Player():
         if self.moving_up and self.not_colliding('up'):
             self.rect.y -= self.speed
 
+    def handle_movement(self):
+        keys = pygame.key.get_pressed()
+        self.moving_down = keys[pygame.K_DOWN]
+        self.moving_up = keys[pygame.K_UP]
+        self.moving_right = keys[pygame.K_RIGHT]
+        self.moving_left = keys[pygame.K_LEFT]
 
     def not_colliding(self, dir):
         size = self.size
@@ -49,9 +55,9 @@ class Player():
             pos_y_1 = (y + extra + self.speed) // size
             pos_y_2 = (y + extra + self.speed) // size
         if dir == 'up':
-            pos_x_1 = (x - extra + self.speed) // size
-            pos_y_2 = (y - extra + self.speed) // size
-        for i in range(len(self.game.tmxdata.layers)):
+            pos_y_1 = (y - extra - self.speed) // size
+            pos_y_2 = (y - extra - self.speed) // size
+        for i in range(len(self.game.map.tmxdata.layers)):
             if Funk(self.game).try_get_prop(pos_x_1, pos_y_1, i)['collision'] == 1:
                 not_colliding = False
             if Funk(self.game).try_get_prop(pos_x_2, pos_y_2, i)['collision'] == 1:

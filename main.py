@@ -6,6 +6,7 @@ from player import Player
 from settings import Settings
 from start_screen import StartScreen
 from character_creation import CharacterCreation
+from map import Map
 
 class Main():
     def __init__(self):
@@ -20,11 +21,12 @@ class Main():
         )
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption('Akavir: God of none')
+        self.animations = pygame.sprite.Group()
         self.tmxdata = load_pygame('map/example_maptmx.tmx')
+        self.map = Map()
         self.player = Player(self)
         self.start_screen = StartScreen(self)
         self.character_creation = CharacterCreation(self)
-        self.animations = pygame.sprite.Group()
 
     def run(self):
         while self.running:
@@ -42,7 +44,7 @@ class Main():
 
     def update_screen(self):
         self.screen.fill((100,100,100))
-        self.blit_all_tiles()
+        self.map.blit_all_tiles(self.screen)
         if self.game_pause:
             if self.character_creation_active:
                 self.character_creation.blitme(self.screen)
@@ -52,28 +54,13 @@ class Main():
             self.screen.blit(self.player.image, self.player.rect)
         pygame.display.flip()
 
-    def blit_all_tiles(self):
-        for i, layer in enumerate(self.tmxdata):
-            for tile in layer.tiles():
-                x_pixel = tile[0] * self.settings.tile_size
-                y_pixel = tile[1] * self.settings.tile_size
-                img = pygame.transform.scale(tile[2], (self.settings.tile_size, self.settings.tile_size))
-                self.screen.blit(img, (x_pixel, y_pixel))
-
     def check_event(self):
         for event in pygame.event.get():
-            self.check_movement()
+            self.player.handle_movement()
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.handle_click()
-
-    def check_movement(self):
-        keys = pygame.key.get_pressed()
-        self.player.moving_down = keys[pygame.K_DOWN]
-        self.player.moving_up = keys[pygame.K_UP]
-        self.player.moving_right = keys[pygame.K_RIGHT]
-        self.player.moving_left = keys[pygame.K_LEFT]
 
     def handle_click(self):
         if self.game_pause == False:
