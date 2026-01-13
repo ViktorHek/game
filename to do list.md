@@ -1,13 +1,13 @@
-# Akavir
+# To Do
 
-## character creation
-1. name, age explanation
-2. Religion
-3. Race
-4. Confirmaion / overview
+* change checkbox. two buttons per line
+
+# Akavir
 
 ## changes
 fighters have no fighting style. but get +1 to all weapons.
+half-elf - Half-Elf Versatility ersatt med +5 speed
+half-elf - abi +1 på två valfria, ersatt med +1 int
 
 ## classes/Practice
 
@@ -33,7 +33,7 @@ sneak attack
 * bard = apostle
 * durid = Guru
 * rogue = virgin
-sorcerer = rabbi
-warlock = Sikh
+* sorcerer = rabbi
+* warlock = Sikh
 
 

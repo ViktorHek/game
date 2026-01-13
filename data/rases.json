@@ -1,171 +1,209 @@
 {
-    "dwarf": {
-        "name": "dwarf",
-        "abs": [{ "name": "con", "val": 2 }],
-        "size": "medium",
-        "url": "http://dnd5e.wikidot.com/lineage:dwarf",
-        "speed": 25,
-        "traits": [ 
-            {
-            "name": "darkvision",
-            "desc": "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
-            },
-            {
-            "name": "dwarven-resilience",
-            "desc": "You have advantage on saving throws against poison, and you have resistance against poison damage."
-            },
-            {
-            "name": "Dwarven Combat Training",
-            "desc": "You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."
-            },
-            {
-            "name": "Stonecunning",
-            "desc": "Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."
-            }
-        ],
-        "toolProficiency": ["smith", "brewer", "mason"],
-        "lang": ["common", "dwarvish"],
-        "subRace": [
-            {
-            "name": "hill-dwarf",
-            "abs": [{ "name": "wisdom", "val": 1 }],
-            "traits": [
-                {
-                "name": "Dwarven Toughness",
-                "desc": "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."
-                }
-            ]
-            },
-            {
-            "name": "mountain-dwarf",
-            "abs": [{ "name": "strength", "val": 2 }],
-            "traits": [
-                {
-                "name": "Dwarven Armor Training",
-                "desc": "You have proficiency with light and medium armor."
-                }
-            ]
-            }
-        ]
-    },
-    "human": {
-        "name": "human",
-        "abs": [
-            { "name": "str", "val": 1 },
-            { "name": "dex", "val": 1 },
-            { "name": "con", "val": 1 },
-            { "name": "int", "val": 1 },
-            { "name": "wis", "val": 1 },
-            { "name": "cha", "val": 1 }
-        ],
-        "size": "medium",
-        "url": "http://dnd5e.wikidot.com/lineage:human",
-        "speed": 30,
-        "traits": [],
-        "toolProficiency": [],
-        "lang": ["common", "choose"],
-        "subRace": [
-            {
-            "name": "variant",
-            "abs": [
-                { "name": "choose", "val": 1 },
-                { "name": "choose", "val": 1 }
-            ],
-            "traits": [
-                {
-                "name": "skills",
-                "desc": "You gain proficiency in one skill of your choice."
-                },
-                {
-                "name": "feat",
-                "desc": "You gain one feat of your choice."
-                }
-            ]
-            }
-        ]
-    },
-    "elf": {
-        "name": "elf",
-        "abs": [{ "name": "dex", "val": 2 }],
-        "size": "medium",
-        "url": "http://dnd5e.wikidot.com/lineage:elf",
-        "speed": 30,
-        "traits": [
-            {
-            "name": "darkvision",
-            "desc": "Accustomed to twilit forests and the night sky, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
-            },
-            {
-            "name": "fay-ancestry",
-            "desc": "You have advantage on saving throws against being charmed, and magic can't put you to sleep."
-            },
-            {
-            "name": "trance",
-            "desc": "Elves do not sleep. Instead they meditate deeply, remaining semi-conscious, for 4 hours a day. The Common word for this meditation is \"trance.\" While meditating, you dream after a fashion; such dreams are actually mental exercises that have become reflexive after years of practice. After resting in this way, you gain the same benefit a human would from 8 hours of sleep."
-            },
-            {
-            "name": "keen-senses",
-            "desc": "You have proficiency in the Perception skill."
-            }
-        ],
-        "toolProficiency": [],
-        "lang": ["common", "elven"],
-        "subRace": [
-            {
-            "name": "dark-elf",
-            "abs": [{ "name": "cha", "val": 1 }],
-            "traits": [
-                {
-                "name": "superior-darkvision",
-                "desc": "Your darkvision has a range of 120 feet, instead of 60."
-                },
-                {
-                "name": "sunlight-sensitivity",
-                "desc": "You have disadvantage on attack rolls and Wisdom (Perception) checks that rely on sight when you, the target of the attack, or whatever you are trying to perceive is in direct sunlight."
-                },
-                {
-                "name": "drow-magic",
-                "desc": "You know the Dancing Lights cantrip. When you reach 3rd level, you can cast the Faerie Fire spell once with this trait and regain the ability to do so when you finish a long rest. When you reach 5th level, you can cast the Darkness spell onceand regain the ability to do so when you finish a long rest. Charisma is your spellcasting ability for these spells."
-                },
-                {
-                "name": "drow-weapon-training",
-                "desc": "You have proficiency with rapiers, shortswords, and hand crossbows."
-                }
-            ]
-            }
-        ]
-    },
-    "gnome": { "name": "gnome" },
-    "half-elf": { "name": "half-elf" },
-    "half-orc": { "name": "half-orc" },
-    "halfling": { "name": "halfling" },
-    "tiefling": { "name": "tiefling" },
-    "dragonborn": { "name": "dragonborn" },
-    "x": {
-      "name": "",
-      "abs": [{ "name": "", "val": 0 }],
-      "size": "",
-      "url": "",
-      "speed": 0,
-      "traits": [
-        {
-          "name": "",
-          "desc": ""
-        }
-      ],
-      "toolProficiency": [],
-      "lang": [],
-      "subRace": [
-        {
-          "name": "",
-          "abs": [{ "name": "", "val": 0 }],
-          "traits": [
-            {
-              "name": "",
-              "desc": ""
-            }
-          ]
-        }
-      ]
-    }
+  "dwarf": {
+    "name": "dwarf",
+    "abs": [{ "name": "con", "val": 2 }],
+    "size": "medium",
+    "url": "http://dnd5e.wikidot.com/lineage:dwarf",
+    "speed": 25,
+    "traits": [
+      {
+        "name": "darkvision",
+        "desc": "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+      },
+      {
+        "name": "dwarven-resilience",
+        "desc": "You have advantage on saving throws against poison, and you have resistance against poison damage."
+      },
+      {
+        "name": "Dwarven Combat Training",
+        "desc": "You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."
+      },
+      {
+        "name": "Stonecunning",
+        "desc": "Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."
+      }
+    ],
+    "toolProficiency": ["smith", "brewer", "mason"],
+    "lang": ["common", "dwarvish"]
+  },
+  "human": {
+    "name": "human",
+    "abs": [
+      { "name": "str", "val": 1 },
+      { "name": "dex", "val": 1 },
+      { "name": "con", "val": 1 },
+      { "name": "int", "val": 1 },
+      { "name": "wis", "val": 1 },
+      { "name": "cha", "val": 1 }
+    ],
+    "size": "medium",
+    "url": "http://dnd5e.wikidot.com/lineage:human",
+    "speed": 30,
+    "traits": [],
+    "toolProficiency": [],
+    "lang": ["common", "choose"]
+  },
+  "elf": {
+    "name": "elf",
+    "abs": [{ "name": "dex", "val": 2 }],
+    "size": "medium",
+    "url": "http://dnd5e.wikidot.com/lineage:elf",
+    "speed": 30,
+    "traits": [
+      {
+        "name": "darkvision",
+        "desc": "Accustomed to twilit forests and the night sky, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+      },
+      {
+        "name": "fay-ancestry",
+        "desc": "You have advantage on saving throws against being charmed, and magic can't put you to sleep."
+      },
+      {
+        "name": "trance",
+        "desc": "Elves do not sleep. Instead they meditate deeply, remaining semi-conscious, for 4 hours a day. The Common word for this meditation is \"trance.\" While meditating, you dream after a fashion; such dreams are actually mental exercises that have become reflexive after years of practice. After resting in this way, you gain the same benefit a human would from 8 hours of sleep."
+      },
+      {
+        "name": "keen-senses",
+        "desc": "You have proficiency in the Perception skill."
+      }
+    ],
+    "toolProficiency": [],
+    "lang": ["common", "elven"]
+  },
+  "gnome": {
+    "name": "gnome",
+    "abs": [{ "name": "int", "val": 2 }],
+    "size": "small",
+    "url": "https://dnd5e.wikidot.com/lineage:gnome",
+    "speed": 25,
+    "traits": [
+      {
+        "name": "darkvision",
+        "desc": "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+      },
+      {
+        "name": "gnome cunning",
+        "desc": "You have advantage on all Intelligence, Wisdom, and Charisma saves against magic."
+      }
+    ]
+  },
+  "half-elf": { 
+    "name": "half-elf",
+    "abs": [
+        { "name": "cha", "val": 2 }, 
+        { "name": "int", "val": 1 }
+    ],
+    "size": "medium",
+    "url": "https://dnd5e.wikidot.com/lineage:half-elf",
+    "speed": 35,
+    "traits": [
+      {
+        "name": "darkvision",
+        "desc": "Thanks to your elven heritage, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+      },
+      {
+        "name": "fey ancestry",
+        "desc": "You have advantage on saving throws against being charmed, and magic can't put you to sleep."
+      }
+
+    ],
+    "toolProficiency": [],
+    "lang": []
+},
+  "half-orc": { 
+    "name": "half-orc", 
+    "abs": [
+        { "name": "str", "val": 2 },
+        { "name": "con", "val": 1 }
+    ],
+    "size": "medium",
+    "url": "https://dnd5e.wikidot.com/lineage:half-orc",
+    "speed": 30,
+    "traits": [
+      {
+        "name": "darkvision",
+        "desc": "Thanks to your orc blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+      },
+      {
+        "name": "menacing",
+        "desc": "You gain proficiency in the Intimidation skill."
+      },
+      {
+        "name": "relentless endurance",
+        "desc": "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest."
+      },
+      {
+        "name": "savage attacks",
+        "desc": "When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit."
+      }
+    ],
+    "toolProficiency": [],
+    "lang": []
+},
+  "halfling": { 
+    "name": "halfling",
+    "abs": [{ "name": "dex", "val": 2 }],
+    "size": "medium",
+    "url": "",
+    "speed": 25,
+    "traits": [
+      {
+        "name": "lucky",
+        "desc": "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die. You must use the new result, even if it is a 1."
+      },
+      {
+        "name": "brave",
+        "desc": "You have advantage on saving throws against being frightened."
+      },
+      {
+        "name": "nimble",
+        "desc": "You can move through the space of any creature that is of a size larger than yours."
+      }
+    ],
+    "toolProficiency": [],
+    "lang": []
+},
+  "tiefling": { 
+    "name": "tiefling", 
+    "abs": [{ "name": "cha", "val": 2 }],
+    "size": "medium",
+    "url": "",
+    "speed": 30,
+    "traits": [
+      {
+        "name": "darkvision",
+        "desc": "Thanks to your infernal heritage, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can’t discern color in darkness, only shades of gray."
+      },
+      {
+        "name": "hellish resistance",
+        "desc": " You have resistance to fire damage."
+      }
+
+    ],
+    "toolProficiency": [],
+    "lang": []
+},
+  "dragonborn": { 
+    "name": "dragonborn",
+    "abs": [
+        { "name": "str", "val": 2 },
+        { "name": "cha", "val": 1 }
+    ],
+    "size": "medium",
+    "url": "",
+    "speed": 30,
+    "traits": [
+      {
+        "name": "dragon breath",
+        "desc": "You can shot fire from yore mouth. The DC of this saving throw is 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increase to 3d6 at 6th level, 4d6 at 11th, and 5d6 at 16th level. After using your breath weapon, you cannot use it again until you complete a short or long rest."
+      },
+      {
+        "name": "dragon resistance",
+        "desc": "You have resistance to fire damage."
+      }
+
+    ],
+    "toolProficiency": [],
+    "lang": []
+  }
 }
