@@ -5,6 +5,7 @@ import json
 from page import Page
 from font import Title, SmallTitle, Text, LongText
 from text_box import TextBox
+from input import Input
 
 class GeneralPage(Page):
     def __init__(self, game):
@@ -22,17 +23,22 @@ class GeneralPage(Page):
         )
         # Right side
         self.right_title = Title("General", self.right_title_container)
-        
+        self.name = ""
+        self.name_input = Input("name", "Name:", (self.right_page.left, self.right_title_container.bottom + 8))
 
     def check_click(self):
-        print("general check click")
+        self.name_input.check_click()
 
     def update(self):
-        no_nothing = True
-        # print("general update")
+        self.name_input.update()
+
+    def handle_key(self, key):
+        name = self.name_input.handle_key(key)
+        if name:
+            self.name = name
 
     def blitme(self, screen):
         super().blitme(screen)
         screen.blit(self.right_title.image, self.right_title.rect)
         screen.blit(self.intro_text.image, self.intro_text_container)
-
+        screen.blit(self.name_input.image, (self.right_page.left, self.right_title_container.bottom + 8))

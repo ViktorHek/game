@@ -49,3 +49,6 @@ class CharacterCreation(Page):
             self.general_page.check_click()
         else:
             self.religion_page.check_click()
+
+    def handle_key(self, key):
+        self.general_page.handle_key(key)

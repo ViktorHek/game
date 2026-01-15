@@ -54,6 +54,7 @@ class Main():
         pygame.display.flip()
 
     def check_event(self):
+        pygame.event.set_blocked(pygame.MOUSEWHEEL)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -73,7 +74,10 @@ class Main():
     #     print(f"scroll_down: {scroll_down}")
 
     def handle_key(self, key, is_down):
-        if key == pygame.K_SPACE:
+        if self.character_creation.general_page.name_input.is_active:
+            if is_down:
+                self.character_creation.handle_key(key)
+        elif key == pygame.K_SPACE:
             if is_down:
                 self.handle_action()
         elif key == pygame.K_p:

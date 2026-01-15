@@ -1,5 +1,6 @@
 import pygame
 import pygame.font
+from settings import Settings
 
 def get_text_height(type="text"):
     if type == "text":
@@ -19,11 +20,11 @@ class Text:
         self.has_underline = has_underline
         self.size = size
         self.parent = parent
-        self.text_color = (13, 141, 103)
+        self.text_color = Settings().text_color
         self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
         self.under_line_img = pygame.image.load('assets/ui_sprites/Sprites/Content/5 Holders/20_2.png').convert_alpha()
         self.text = self.font.render(text, True, self.text_color).convert_alpha()
-        self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA)
+        self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA).convert_alpha()
         self.text_rect = self.text.get_rect(center=self.image.get_rect().center)
         self.image.blit(self.text, (self.text_rect.x, self.text_rect.y))
         if centered:
