@@ -63,6 +63,7 @@ class Button(Sprite):
             self.is_selected = False
             return False
 
+# List =  {"id": any, "text": string, "value": any}
 class CheckBoxList():
     def __init__(self, game, parent, list):
         self.game = game
@@ -74,9 +75,17 @@ class CheckBoxList():
         arr = []
         box = self.parent.copy()
         box.height = 32
-        for button in list:
-            arr.append(CheckBox(self.game, button["id"], button["text"], box, button["value"]))
-            box.y += 32
+        box.width = box.width // 2
+        base_x = box.x
+        for i, obj in enumerate(list):
+            arr.append(CheckBox(self.game, obj["id"], obj["text"], box, obj["value"]))
+            if i % 2 == 0: #Even
+                if box.x == base_x:
+                    box.x += box.width 
+                else:
+                    box.x -= box.width
+            else: # Odd
+                box.y += 32  
         return arr
     
     def update(self):
@@ -133,11 +142,11 @@ class CheckBox(Button):
         self.surf_active.blit(self.check_box_img, self.check_box_rect)
         self.surf_active.blit(start, start_rect)
         x = start_rect.right
-        while x < self.container.right - 64:
+        while x < self.container.right - 32 - 16:
             self.surf_active.blit(middle, (x, start_rect.top))
             x += middle.get_width()
         self.surf_active.blit(middle, (x - 8, start_rect.top))
-        self.surf_active.blit(end, end.get_rect(right = self.container.right - 32))
+        self.surf_active.blit(end, end.get_rect(right = self.container.right - 16))
         self.surf_active.blit(self.text.text, self.text.rect)
 
     def blitme(self, screen):

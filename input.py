@@ -12,7 +12,7 @@ class Input:
         self.value = ""
         self.width = 288
         self.height = 32
-        self.font_size = 20
+        self.font_size = 22
         self.settings = Settings()
         self.max_letter = max_letters
         self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', self.font_size)

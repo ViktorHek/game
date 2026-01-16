@@ -180,7 +180,7 @@
     "lang": []
 },
   "dragonborn": { 
-    "name": "dragonborn",
+    "name": "dovakin",
     "abs": [
         { "name": "str", "val": 2 },
         { "name": "cha", "val": 1 }

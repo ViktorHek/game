@@ -555,6 +555,7 @@
           "medicine",
           "nature",
           "perception",
+          "performance",
           "persuasion",
           "religion",
           "sleight of hand",
@@ -1025,6 +1026,117 @@
         "ability": ["metamagic"],
         "spell_slots": [4,3,3,3,2],
         "spells_known": 11
+      }
+    ]
+  },
+  "none": {
+    "name": "None",
+    "hit_die": 10,
+    "proficiency_choices": [
+      {
+        "choose": 2,
+        "options": [
+          "acrobatics",
+          "animal handling",
+          "arcana",
+          "athletics",
+          "deception",
+          "history",
+          "insight",
+          "intimidation",
+          "investigation",
+          "medicine",
+          "nature",
+          "perception",
+          "performance",
+          "persuasion",
+          "religion",
+          "sleight of hand",
+          "stealth",
+          "survival"
+        ]
+      }
+    ],
+    "saving_throws": ["str", "con"],
+    "primary_skill": "strength",
+    "secondary_skill": "constitution",
+    "subclasses": [
+      {
+        "name": "archer"
+      }
+    ],
+    "spellcasting_ability": "",
+    "desc": "You follow no god. You rely on no one. And you gain nothing. You are an atheist in a world ruled by gods.",
+    "levels": [
+      {
+        "level": 1,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 2,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 3,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 4,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 5,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 6,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 7,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 8,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 9,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
+      },
+      {
+        "level": 10,
+        "cantrips": 0,
+        "ability": [],
+        "spell_slots": [],
+        "spells_known": 0
       }
     ]
   }
