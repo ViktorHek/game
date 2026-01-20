@@ -1,5 +1,3 @@
-from csv import Error
-from turtle import left
 import pygame
 from pathlib import Path
 import json
@@ -70,10 +68,10 @@ class RacePage(Page):
         self.traits_title = Text("Traits", self.traits_title_container, size=22)
 
         self.traits_surf = pygame.Surface((
-            self.left_page.right - self.left_page.left, 
+            self.left_page.right - self.left_page.left - 8 * 2, 
             self.left_page.bottom - self.traits_title_container.bottom + 8
         ), pygame.SRCALPHA).convert_alpha()
-        self.traits_rect = self.traits_surf.get_rect(top=self.traits_title_container.bottom + 8, left=self.left_page.left)
+        self.traits_rect = self.traits_surf.get_rect(top=self.traits_title_container.bottom + 8, left=self.left_page.left + 8)
         traits_list = self.current_race["traits"]
         for i, trait in enumerate(traits_list):
             p = self.traits_surf.get_rect()

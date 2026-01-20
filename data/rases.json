@@ -11,7 +11,7 @@
         "desc": "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
       },
       {
-        "name": "dwarven-resilience",
+        "name": "resilience",
         "desc": "You have advantage on saving throws against poison, and you have resistance against poison damage."
       },
       {
@@ -125,7 +125,7 @@
         "desc": "You gain proficiency in the Intimidation skill."
       },
       {
-        "name": "relentless endurance",
+        "name": "relentless",
         "desc": "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest."
       },
       {
@@ -171,7 +171,7 @@
         "desc": "Thanks to your infernal heritage, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can’t discern color in darkness, only shades of gray."
       },
       {
-        "name": "hellish resistance",
+        "name": "resistance",
         "desc": " You have resistance to fire damage."
       }
 
@@ -190,11 +190,11 @@
     "speed": 30,
     "traits": [
       {
-        "name": "dragon breath",
+        "name": "bad breath",
         "desc": "You can shot fire from yore mouth. The DC of this saving throw is 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increase to 3d6 at 6th level, 4d6 at 11th, and 5d6 at 16th level. After using your breath weapon, you cannot use it again until you complete a short or long rest."
       },
       {
-        "name": "dragon resistance",
+        "name": "resistance",
         "desc": "You have resistance to fire damage."
       }
 

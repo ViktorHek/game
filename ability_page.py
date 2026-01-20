@@ -1,55 +1,79 @@
-from turtle import right, width
-from matplotlib.style import available
 import pygame
 import pygame.font
+from pathlib import Path
+import json
 
 from page import Page
 from font import Title
 from settings import Settings
+from button import CheckBoxList
 
 class AbilityPage(Page):
     def __init__(self, game):
         super().__init__(game)
+        self.left_title = Title("Skills", self.left_title_container)
+        skills_path = Path("data/skills.json")
+        self.skill_list = json.loads(skills_path.read_text()) 
+        self.skill_list_container = self.left_page.copy()
+        self.skill_list_container.top = self.left_title_container.bottom + 8
+        self.skills = CheckBoxList(
+            game, 
+            self.skill_list_container, 
+            [{"id": skill, "text": skill, "value": skill} for skill in self.skill_list],
+            slim = True,
+            multi = True,
+            amount = 3
+        )
         self.ability_list = ["strength", "wisdom", "constitution", "dexterity", "intelligence", "charisma"]
-        self.values = [8, 10, 12, 13, 14, 15]
+        self.values = [0, 8, 10, 12, 13, 14, 15]
+        self.abilities = []
+        self.populate_abilities()
+        self.right_title = Title("Ability", self.right_title_container)
+
+    def populate_abilities(self):
         ac = self.right_page.copy() # ability container
         ac.height -= self.right_title_container.height + 8
         ac.top = self.right_title_container.bottom + 8
         w = ac.width // 2
         h = ac.height // 3
-        self.abilities = []
         for i, ability in enumerate(self.ability_list):
             l = ac.left if i % 2 == 0 else ac.left + w
             t = ac.top 
-            if i > 1 and i < 4:
+            if i == 2 or i == 3:
                 t += h
             if i > 3:
                 t += h * 2
-            con = pygame.Rect((l, t), (w,h))
-            self.abilities.append([con, AbilityBox(ability[:3], con)])
-        self.right_title = Title("Ability", self.right_title_container)
+            container = pygame.Rect((l, t), (w,h))
+            self.abilities.append(AbilityBox(ability[:3], container))
 
     def check_click(self):
+        id = self.skills.check_click()
+        if id:
+            pass
+            # print(id)
+        taken = set(a.value_index for a in self.abilities)
         for ability in self.abilities:
-            val = ability[1].handle_click()
-            if val:
-                ability[1].change_value(val)
+            operator = ability.handle_click()
+            if operator:
+                ability.change_value(operator, taken)
 
     def update(self):
-        pass
-        # self.check_box_list.update()
+        self.skills.update()
 
     def blitme(self, screen):
         super().blitme(screen)
         for ability in self.abilities:
-            screen.blit(ability[1].image, ability[0])
+            screen.blit(ability.image, ability.parent)
+        screen.blit(self.left_title.image, self.left_title.rect)
         screen.blit(self.right_title.image, self.right_title.rect)
+        self.skills.draw_list(screen)
 
 class AbilityBox:
     def __init__(self, label, parent):
-        self.value = 0
+        self.value_index = 0
         self.test = label
         self.parent = parent
+        self.values = [0, 8, 10, 12, 13, 14, 15]
         url = "assets/ui_sprites/Sprites/Content/"
         self.image = pygame.Surface((parent.width, parent.height), pygame.SRCALPHA).convert_alpha()
         self.holder_image = pygame.image.load(url + "5 Holders/3.png").convert_alpha() # 80 x 80
@@ -71,8 +95,8 @@ class AbilityBox:
 
     def blit_image(self):
         val = "-"
-        if self.value != 0:
-            val = str(self.value)
+        if self.values[self.value_index] != 0:
+            val = str(self.values[self.value_index])
         self.ability_text = self.big_font.render(val, False, Settings().text_color)
         self.image.blit(self.button_holer, (self.minus_rect))
         self.image.blit(self.button_holer, (self.plus_rect))
@@ -92,10 +116,19 @@ class AbilityBox:
             return "+"
         return None
 
-    def change_value(self, val):
-        if val == "+":
-            self.value += 1
+    def change_value(self, operator, options):
+        l = list(range(0, len(self.values)))
+        if operator == "+":
+            for i in l:
+                if i > self.value_index and i not in options:
+                    self.value_index = i
+                    break
         else:
-            if self.value > 0:
-                self.value -= 1
+            l.reverse()
+            if 0 in options:
+                options.remove(0)
+            for i in l:
+                if i < self.value_index and i not in options:
+                    self.value_index = i
+                    break
         self.blit_image()

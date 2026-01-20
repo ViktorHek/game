@@ -9,6 +9,9 @@ fighters have no fighting style. but get +1 to all weapons.
 half-elf - Half-Elf Versatility ersatt med +5 speed
 half-elf - abi +1 på två valfria, ersatt med +1 int
 
+"sleight of hand" -> "finesse"
+"animal handeling" -> "animals" 
+
 ## classes/Practice
 
 monk spelslot:

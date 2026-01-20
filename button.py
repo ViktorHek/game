@@ -1,6 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
-from font import Text
+from font import Text, PlainText
 from tool_tip import ToolTip
 
 class Button(Sprite):
@@ -52,24 +52,32 @@ class Button(Sprite):
         else:
             self.is_hover = False
 
-    def check_click(self):
+    def check_click(self, multi=False):
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             self.is_checked = True
             self.is_selected = True
             return self.id
         else:
-            self.is_checked = False
-            self.is_selected = False
+            if multi == False:
+                self.is_checked = False
+                self.is_selected = False
             return False
 
 # List =  {"id": any, "text": string, "value": any}
 class CheckBoxList():
-    def __init__(self, game, parent, list):
+    def __init__(self, game, parent, list, slim=False, multi=False, pre_selected=[], amount=0):
         self.game = game
         self.parent = parent
+        self.multi = multi
+        self.slim = slim
+        self.pre_selected = pre_selected
+        self.amount = amount
         self.list = self.get_list(list)
         self.current = self.list[0].id
+        self.selected = []
+        for x in pre_selected:
+            self.selected.append(x)
 
     def get_list(self, list):
         arr = []
@@ -78,27 +86,54 @@ class CheckBoxList():
         box.width = box.width // 2
         base_x = box.x
         for i, obj in enumerate(list):
-            arr.append(CheckBox(self.game, obj["id"], obj["text"], box, obj["value"]))
+            if self.slim:
+                arr.append(CheckBoxSlim(self.game, obj["id"], obj["text"], box, obj["value"], pre_selected = self.pre_selected))
+            else:
+                arr.append(CheckBox(self.game, obj["id"], obj["text"], box, obj["value"]))
             if i % 2 == 0: #Even
-                if box.x == base_x:
-                    box.x += box.width 
-                else:
-                    box.x -= box.width
+                op = 1 if box.x == base_x else -1
+                box.x += box.width * op
             else: # Odd
-                box.y += 32  
+                box.y += 32
         return arr
     
     def update(self):
         for btn in self.list:
             btn.update()
 
+    def multi_select_click(self):
+        pass
+
+
     def check_click(self):
         val = False
+        if self.multi:
+            self.multi_select_click()
+        else:
+            for btn in self.list:
+                id = btn.check_click()
+                if id:
+                    self.current = id
+                    val = btn.value
+        return val
+
+    def check_click(self):
+        val = False
+        is_max = len(self.selected) == self.amount
+        print(is_max)
         for btn in self.list:
-            id = btn.check_click()
+            id = btn.check_click(self.multi, is_max)
             if id:
-                self.current = id
+                if self.multi:
+                    if id in self.selected:
+                        self.selected.remove(id)
+                    else:
+                        if is_max:
+                            self.selected.append(id)
+                else:
+                    self.current = id
                 val = btn.value
+        print(self.selected)
         return val
 
     def draw_list(self, screen):
@@ -158,3 +193,63 @@ class CheckBox(Button):
             screen.blit(self.check_img, self.check_img_rect)
         if self.is_selected:
             screen.blit(self.arrow, self.arrow_rect)
+
+class CheckBoxSlim():
+    def __init__(self, game, id, text, parent, value=None, tool_tip="", pre_selected=[]):
+        # super().__init__(game, id, text, parent, value, tool_tip)
+        # self.width = 280
+        self.game_screen = game.screen
+        self.is_hover = False
+        if id in pre_selected:
+            self.is_checked = True
+        else:
+            self.is_checked = False
+        self.value = value
+        self.id = id
+        self.height = game.settings.tile_size
+        self.surf = pygame.Surface((parent.width, parent.height), pygame.SRCALPHA).convert_alpha()
+        self.rect = self.surf.get_rect(center = parent.center)
+        url = "assets/ui_sprites/Sprites/Content/"
+        self.surf_rect = self.surf.get_rect()
+        self.check_box_img = pygame.image.load(url + '5 Holders/22.png').convert_alpha()
+        self.check_box_img_rect = self.check_box_img.get_rect(centery = self.surf_rect.centery, left = self.surf_rect.left)
+        self.check_img = pygame.image.load(url + "2 Icons/5.png").convert_alpha()
+        self.check_img_rect = self.check_img.get_rect(centery = self.rect.centery - 1, left = self.rect.left)
+        self.container = self.surf.get_rect(left = self.check_box_img.get_width() + 8, width=self.rect.width - self.check_box_img.get_width() - 8)
+        self.text = PlainText(text, has_underline=False)
+        self.fill_surf()
+
+    def fill_surf(self):
+        self.surf.blit(self.check_box_img, self.check_box_img_rect)
+        tr = self.text.text.get_rect(centery = self.container.centery, left = self.container.left)
+        self.surf.blit(self.text.text, tr)
+
+    def blitme(self, screen):
+        screen.blit(self.surf, self.rect)
+        if self.is_checked:
+            screen.blit(self.check_img, self.check_img_rect)
+        if self.is_hover:
+            r = self.text.under_line_img.get_rect(bottom = self.rect.bottom - 4, left = self.rect.left + self.text.text.get_width() // 2)
+            screen.blit(self.text.under_line_img, r)
+
+    def update(self):
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            self.is_hover = True
+        else:
+            self.is_hover = False
+        # self.fill_surf()
+
+    def check_click(self, multi=False, not_max=False):
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            if not_max:
+                if self.is_checked:
+                    self.is_checked = False
+                else:
+                    self.is_checked = True
+            return self.id
+        else:
+            if multi == False:
+                self.is_checked = False
+            return False
