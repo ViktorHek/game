@@ -10,9 +10,11 @@ class MiraclesPage(Page):
         super().__init__(game)
         self.left_title = Title("Miracles", self.left_title_container)
         self.right_title = Title("Description", self.right_title_container)
+        self.complete = False
         
     def check_click(self):
         pass
+
     def update(self):
         pass
 

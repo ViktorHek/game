@@ -13,18 +13,20 @@ class RacePage(Page):
         super().__init__(game)
         rases_path = Path("data/rases.json")
         self.db_races = json.loads(rases_path.read_text())
+        init_race = self.db_races["dwarf"]
         self.current_race = self.db_races["dwarf"]
         margin = 8
+        self.complete = False
         # Left side
-        self.left_title = Title(self.current_race["name"], self.left_title_container)
+        self.left_title = Title(init_race["name"], self.left_title_container)
         self.size_container = self.left_page.copy()
         self.size_container.top = self.left_title_container.bottom + margin
         self.size_container.left += margin
-        self.size_text = Text(f"Size: {self.current_race["size"]}", self.size_container, has_underline=False, centered=False)
+        self.size_text = Text(f"Size: {init_race["size"]}", self.size_container, has_underline=False, centered=False)
         self.size_container.height = self.size_text.image.get_height()
         self.speed_container = self.size_container.copy()
         self.speed_container.top = self.size_container.bottom
-        self.speed_text = Text(f"Speed: {self.current_race["speed"]}", self.speed_container, has_underline=False, centered=False)
+        self.speed_text = Text(f"Speed: {init_race["speed"]}", self.speed_container, has_underline=False, centered=False)
         self.get_abi()
         self.get_traits()
 
@@ -101,6 +103,7 @@ class RacePage(Page):
         id = self.check_box_list.check_click()
         if id:
             self.current_race = self.db_races[id]
+            self.complete = True
             self.render_text()
 
     def update(self):

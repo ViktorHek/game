@@ -13,6 +13,7 @@ class CharacterCreation(Page):
     def __init__(self, game):
         super().__init__(game)
         self.game = game
+        # self.pages_completed = 0
         self.religion_page = ReligionPage(game)
         self.race_page = RacePage(game)
         self.general_page = GeneralPage(game)
@@ -56,6 +57,20 @@ class CharacterCreation(Page):
             self.general_page.blitme(screen)
         self.nav_bar.blitme(screen)
 
+    def get_completed_amount(self):
+        val = 0
+        if self.general_page.complete:
+            val += 1
+        if self.religion_page.complete:
+            val += 1
+        if self.race_page.complete:
+            val += 1
+        if self.ability_page.complete:
+            val += 1
+        if self.miracles_page.complete:
+            val += 1
+        return val
+
     def handle_click(self):
         self.nav_bar.handle_click()
         self.page = self.nav_bar.current
@@ -73,6 +88,10 @@ class CharacterCreation(Page):
             self.submit_page.check_click()
         else:
             self.religion_page.check_click()
+        completed = self.get_completed_amount()
+        self.nav_bar.update_nav(completed)
 
     def handle_key(self, key):
         self.general_page.handle_key(key)
+        completed = self.get_completed_amount()
+        self.nav_bar.update_nav(completed)

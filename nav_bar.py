@@ -3,6 +3,7 @@ import pygame
 class NavBar:
     def __init__(self):
         self.pages = ["general", "religion", "race", "ability", "miracles", "submit"]
+        self.available_pages = ["general"]
         pos_x = 836
         pos_y = 82
         self.current = self.pages[0]
@@ -10,15 +11,25 @@ class NavBar:
         width = 46
         height = 32 + 50 * (len(self.pages) - 1)
         self.surf = pygame.Surface((width, height), pygame.SRCALPHA)
-        self.list = self.get_list(self.pages, self.base_rect)
+        self.list = self.get_list(self.available_pages, self.base_rect)
         self.render_list()
         self.rect = self.surf.get_rect(x = pos_x, y = pos_y)
 
     def get_list(self, pages, rect):
         arr = []
         for i, text in enumerate(pages):
+            print(text)
             arr.append(NavItem(i + 1, text, rect.move(0, 50 * i)))
         return arr
+
+    def update_nav(self, completed_amount):
+        for i, page in enumerate(self.pages):
+            if i < completed_amount + 1:
+                if page not in self.available_pages:
+                    self.available_pages.append(page)
+        print(self.available_pages)
+        self.list = self.get_list(self.available_pages, self.base_rect)
+        self.render_list()
 
     def render_list(self):
         for i, item in enumerate(self.list):

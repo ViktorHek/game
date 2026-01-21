@@ -47,6 +47,7 @@ class GeneralPage(Page):
             {"id": "neither", "text": "neither", "value": "neither"},
         ]
         self.gender_checkbox = CheckBoxList(game, self.gender_checkbox_container,gender_list)
+        self.complete = False
 
     def check_click(self):
         self.name_input.check_click()
@@ -54,6 +55,7 @@ class GeneralPage(Page):
         id = self.gender_checkbox.check_click()
         if id:
             self.gender = id
+        self.check_if_done()
 
     def update(self):
         self.name_input.update()
@@ -69,6 +71,13 @@ class GeneralPage(Page):
             age = self.age_input.handle_key(key)
             if age:
                 self.age = age
+        self.check_if_done()
+
+    def check_if_done(self):
+        if self.name != "" and self.age != 0 and self.gender != "":
+            self.complete = True
+        else:
+            self.complete = False
 
     def blitme(self, screen):
         super().blitme(screen)

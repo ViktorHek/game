@@ -14,6 +14,7 @@ class AbilityPage(Page):
         self.left_title = Title("Proficiencies", self.left_title_container)
         proficiencies_path = Path("data/proficiencies.json")
         self.proficiencies_list = json.loads(proficiencies_path.read_text()) 
+        self.complete = False
         self.selected_proficiencies = []
         self.proficiencies_list_container = self.left_page.copy()
         self.proficiencies_list_container.top = self.left_title_container.bottom + 8
@@ -65,6 +66,12 @@ class AbilityPage(Page):
             operator = ability.handle_click()
             if operator:
                 ability.change_value(operator, taken)
+
+    def check_if_complete(self):
+        if True:
+            self.complete = False
+        else:
+            self.complete = False
 
     def update(self):
         self.proficiencies.update()
