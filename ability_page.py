@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 
 from page import Page
-from font import Title
+from font import PlainText, Title
 from settings import Settings
 from button import CheckBoxList
 
@@ -14,8 +14,10 @@ class AbilityPage(Page):
         self.left_title = Title("Skills", self.left_title_container)
         skills_path = Path("data/skills.json")
         self.skill_list = json.loads(skills_path.read_text()) 
+        self.selected_skills = []
         self.skill_list_container = self.left_page.copy()
         self.skill_list_container.top = self.left_title_container.bottom + 8
+        self.skill_max_amount = 3
         self.skills = CheckBoxList(
             game, 
             self.skill_list_container, 
@@ -29,7 +31,14 @@ class AbilityPage(Page):
         self.abilities = []
         self.populate_abilities()
         self.right_title = Title("Ability", self.right_title_container)
+        self.get_info_text(0)
 
+    def get_info_text(self, selected):
+        text = f"{selected} out of {self.skill_max_amount} skills"
+        self.skill_info = PlainText(text)
+        self.skill_info.rect.center = self.left_page.center
+        self.skill_info.rect.bottom = self.left_page.bottom
+        
     def populate_abilities(self):
         ac = self.right_page.copy() # ability container
         ac.height -= self.right_title_container.height + 8
@@ -47,10 +56,10 @@ class AbilityPage(Page):
             self.abilities.append(AbilityBox(ability[:3], container))
 
     def check_click(self):
-        id = self.skills.check_click()
-        if id:
-            pass
-            # print(id)
+        skill_list = self.skills.check_click()
+        if skill_list:
+            self.selected_skills = skill_list
+            self.get_info_text(len(self.selected_skills))
         taken = set(a.value_index for a in self.abilities)
         for ability in self.abilities:
             operator = ability.handle_click()
@@ -67,6 +76,7 @@ class AbilityPage(Page):
         screen.blit(self.left_title.image, self.left_title.rect)
         screen.blit(self.right_title.image, self.right_title.rect)
         self.skills.draw_list(screen)
+        screen.blit(self.skill_info.text, self.skill_info.rect)
 
 class AbilityBox:
     def __init__(self, label, parent):

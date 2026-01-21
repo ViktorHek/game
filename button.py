@@ -52,16 +52,15 @@ class Button(Sprite):
         else:
             self.is_hover = False
 
-    def check_click(self, multi=False):
-        pos = pygame.mouse.get_pos()
+    def check_click(self, pos=None):
+        pos = pos if pos else pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             self.is_checked = True
             self.is_selected = True
             return self.id
         else:
-            if multi == False:
-                self.is_checked = False
-                self.is_selected = False
+            self.is_checked = False
+            self.is_selected = False
             return False
 
 # List =  {"id": any, "text": string, "value": any}
@@ -101,39 +100,36 @@ class CheckBoxList():
         for btn in self.list:
             btn.update()
 
-    def multi_select_click(self):
-        pass
+    def multi_select_click(self, pos):
+        for btn in self.list:
+            if len(self.selected) == self.amount:
+                id = btn.check_click(pos)
+                if btn.id in self.selected and id:
+                    btn.is_checked = False
+                    self.selected.remove(id)
+            else:
+                id = btn.check_click(pos)
+                if id:
+                    if id in self.selected:
+                        self.selected.remove(id)
+                        btn.is_checked = False
+                    else:
+                        self.selected.append(id)
+                        btn.is_checked = True
+        return self.selected
 
 
-    def check_click(self):
+    def check_click(self, pos=None):
+        pos = pos if pos else pygame.mouse.get_pos()
         val = False
         if self.multi:
-            self.multi_select_click()
+            val = self.multi_select_click(pos)
         else:
             for btn in self.list:
                 id = btn.check_click()
                 if id:
                     self.current = id
                     val = btn.value
-        return val
-
-    def check_click(self):
-        val = False
-        is_max = len(self.selected) == self.amount
-        print(is_max)
-        for btn in self.list:
-            id = btn.check_click(self.multi, is_max)
-            if id:
-                if self.multi:
-                    if id in self.selected:
-                        self.selected.remove(id)
-                    else:
-                        if is_max:
-                            self.selected.append(id)
-                else:
-                    self.current = id
-                val = btn.value
-        print(self.selected)
         return val
 
     def draw_list(self, screen):
@@ -196,8 +192,6 @@ class CheckBox(Button):
 
 class CheckBoxSlim():
     def __init__(self, game, id, text, parent, value=None, tool_tip="", pre_selected=[]):
-        # super().__init__(game, id, text, parent, value, tool_tip)
-        # self.width = 280
         self.game_screen = game.screen
         self.is_hover = False
         if id in pre_selected:
@@ -238,18 +232,10 @@ class CheckBoxSlim():
             self.is_hover = True
         else:
             self.is_hover = False
-        # self.fill_surf()
 
-    def check_click(self, multi=False, not_max=False):
-        pos = pygame.mouse.get_pos()
+    def check_click(self, pos=None):
+        pos = pos if pos else pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
-            if not_max:
-                if self.is_checked:
-                    self.is_checked = False
-                else:
-                    self.is_checked = True
             return self.id
         else:
-            if multi == False:
-                self.is_checked = False
             return False
