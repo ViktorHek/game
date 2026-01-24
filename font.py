@@ -1,5 +1,6 @@
 import pygame
 import pygame.font
+from settings import Settings
 
 def get_text_height(type="text"):
     if type == "text":
@@ -13,17 +14,39 @@ def get_text_height(type="text"):
     f = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
     return f.render("Dummy text", True, (0,0,0)).convert_alpha().get_height()
 
+class PlainText:
+    def __init__(self, text, size=18, has_underline=False):
+        pygame.font.init()
+        self.size = size
+        self.has_underline = has_underline
+        self.text_color = Settings().text_color
+        self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
+        self.text = self.font.render(text, False, self.text_color).convert_alpha()
+        self.under_line_img = pygame.image.load('assets/ui_sprites/Sprites/Content/5 Holders/20_2.png').convert_alpha()
+        if has_underline:
+            self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA).convert_alpha()
+            self.image.blit(self.text, self.text.get_rect())
+            self.rect = self.image.get_rect()
+            ulr = self.under_line_img.get_rect(centerx = self.rect.centerx, bottom = self.rect.bottom)
+            self.image.blit(self.under_line_img, ulr)
+        else:
+            self.image = self.text
+            self.rect = self.text.get_rect()
+
+    def blitme(self, screen):
+        screen.blit(self.image, self.rect)
+
 class Text:
     def __init__(self, text, parent, size=20, has_underline=False, centered=True):
         pygame.font.init()
         self.has_underline = has_underline
         self.size = size
         self.parent = parent
-        self.text_color = (13, 141, 103)
+        self.text_color = Settings().text_color
         self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
         self.under_line_img = pygame.image.load('assets/ui_sprites/Sprites/Content/5 Holders/20_2.png').convert_alpha()
-        self.text = self.font.render(text, True, self.text_color).convert_alpha()
-        self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA)
+        self.text = self.font.render(text, False, self.text_color).convert_alpha()
+        self.image = pygame.Surface((self.text.get_width(), self.text.get_height()), pygame.SRCALPHA).convert_alpha()
         self.text_rect = self.text.get_rect(center=self.image.get_rect().center)
         self.image.blit(self.text, (self.text_rect.x, self.text_rect.y))
         if centered:
@@ -107,7 +130,7 @@ class LongText(Text):
         x = 0
         for i, word in enumerate(string_list):
             val = word if i == len(string_list) - 1 else word  + " "
-            t = self.font.render(val, True, self.text_color)
+            t = self.font.render(val, False, self.text_color)
             if x + t.get_width() > self.width:
                 list.append([t])
                 line += 1

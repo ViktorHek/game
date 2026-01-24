@@ -23,7 +23,7 @@ class Main():
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption('Akavir: God of none')
         self.animations = pygame.sprite.Group()
-        self.map = Map()
+        # self.map = Map()
         self.player = Player(self)
         self.start_screen = StartScreen(self)
         self.character_creation = CharacterCreation(self)
@@ -45,7 +45,7 @@ class Main():
 
     def update_screen(self):
         self.screen.fill((100,100,100))
-        self.map.blit_all_tiles(self.screen)
+        # self.map.blit_all_tiles(self.screen)
         if self.game_pause:
             if self.character_creation_active:
                 self.character_creation.blitme(self.screen)
@@ -57,6 +57,7 @@ class Main():
         pygame.display.flip()
 
     def check_event(self):
+        pygame.event.set_blocked(pygame.MOUSEWHEEL)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -76,8 +77,12 @@ class Main():
     #     print(f"scroll_down: {scroll_down}")
 
     def handle_key(self, key, is_down):
-        if key == pygame.K_SPACE:
-            self.handle_action(is_down)
+        if self.character_creation.general_page.name_input.is_active or self.character_creation.general_page.age_input.is_active:
+            if is_down:
+                self.character_creation.handle_key(key)
+        elif key == pygame.K_SPACE:
+            if is_down:
+                self.handle_action()
         elif key == pygame.K_p:
             self.game_pause = True
         elif key == pygame.K_q:
@@ -101,3 +106,4 @@ if __name__ == '__main__':
     game = Main()
     game.run()
     pygame.quit()
+    quit()

@@ -4,8 +4,7 @@ import pygame as py
 from font import Text, LongText
 
 class TextBox:
-    def __init__(self, game, text, parent, title=""):
-        self.game = game
+    def __init__(self, text, parent, title=""):
         self.parent = parent
         self.title = title
         self.width = parent.width - 32
@@ -19,7 +18,6 @@ class TextBox:
         self.render_box()
         self.image.blit(self.text.image, self.text.rect)
         
-
     def update(self):
         self.text.update()
 
