@@ -70,8 +70,9 @@ class AbilityPage(Page):
 
     def reset(self):
         self.player = self.get_player()
-        self.selected_proficiencies = []
+        # self.selected_proficiencies = []
         self.proficiencies_max_amount = self.player["pa"]
+        s = self.proficiencies.selected
         self.proficiencies = CheckBoxList(
             self.game, 
             self.proficiencies_list_container, 
@@ -81,8 +82,15 @@ class AbilityPage(Page):
             amount = self.proficiencies_max_amount,
             disabled = self.get_disabled_proficiencies(self.player["po"])
         )
+        self.proficiencies.selected = s
+        vals = []
+        for x in self.abilities:
+            vals.append([x.label_text, x.value_index])
         self.abilities = self.populate_abilities()
-
+        for val in vals:
+            for i, a in enumerate(self.abilities):
+                if val[0] == a.label_text:
+                    self.abilities[i].value_index = val[1]
 
     def get_info_text(self, selected):
         text = f"{selected} out of {self.proficiencies_max_amount} proficiencies"
@@ -149,7 +157,7 @@ class AbilityPage(Page):
 class AbilityBox:
     def __init__(self, label, parent, bonus=0):
         self.value_index = 0
-        self.test = label
+        self.label_text = label
         self.parent = parent
         self.bonus = bonus
         self.values = [0, 8, 10, 12, 13, 14, 15]

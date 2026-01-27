@@ -1,0 +1,192 @@
+{
+  "cantrip": [
+    {
+      "higher_level": [],
+      "index": 0,
+      "name": "vicious mockery",
+      "desc": "You unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn. This spell's damage increases by 1d4 when you reach 5th level (2d4), 11th level (3d4), and 17th level (4d4).",
+      "range": "60 feet",
+      "components": ["V"],
+      "ritual": false,
+      "duration": "Instantaneous",
+      "concentration": false,
+      "casting_time": "1 action",
+      "level": 0,
+      "damage": {
+          "damage_type": "psychic",
+          "damage_at_character_level": {
+              "1": "1d4",
+              "5": "2d4",
+              "11": "3d4",
+              "17": "4d4"
+          }
+      },
+      "dc": {
+          "dc_type": "wis",
+          "dc_success": "none"
+      },
+      "school": "enchantment",
+      "classes": ["bard"],
+      "subclasses": []
+    },
+    {
+      "higher_level": [],
+      "index": 1,
+      "name": "true-strike",
+      "desc": "You extend your hand and point a finger at a target in range. Your magic grants you a brief insight into the target's defenses. On your next turn, you gain advantage on your first attack roll against the target, provided that this spell hasn't ended.",
+      "range": "30 feet",
+      "components": [
+          "S"
+      ],
+      "ritual": false,
+      "duration": "Up to 1 round",
+      "concentration": true,
+      "casting_time": "1 action",
+      "level": 0,
+      "school": "divination",
+      "classes": [
+        "bard",
+        "sorcerer",
+        "warlock",
+        "wizard"
+      ],
+      "subclasses": [
+        "lore"
+      ]
+    },
+    {
+      "higher_level": ["The spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6)."],
+      "index": 2,
+      "name": "thunderclap",
+      "desc": "You create a burst of thunderous sound, which can be heard 100 feet away. Each creature other than you within 5 feet of you must make a Constitution saving throw. On a failed save, the creature takes 1d6 thunder damage.",
+      "range": "self",
+      "components": [
+          "S"
+      ],
+      "ritual": false,
+      "duration": "Instantaneous",
+      "concentration": false,
+      "casting_time": "1 action",
+      "level": 0,
+      "school": "evocation",
+      "classes": [
+        "bard",
+        "druid",
+        "sorcerer",
+        "warlock",
+        "wizard"
+      ],
+      "subclasses": [
+        "lore"
+      ]
+    },
+    {
+      "higher_level": [],
+      "name": "mending",
+      "index": 4,
+      "desc": "This spell repairs a single break or tear in an object you touch, such as a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no longer than 1 foot in any dimension, you mend it, leaving no trace of the former damage. This spell can physically repair a magic item or construct, but the spell can't restore magic to such an object.",
+      "range": "Touch",
+      "components": [
+          "V",
+          "S",
+          "M"
+      ],
+      "material": "Two lodestones.",
+      "ritual": false,
+      "duration": "Instantaneous",
+      "concentration": false,
+      "casting_time": "1 minute",
+      "level": 0,
+      "school": "transmutation",
+      "classes": [
+        "cleric",
+        "bard",
+        "druid",
+        "sorcerer",
+        "wizard"
+      ],
+      "subclasses": ["lore"]
+    },
+    {
+      "higher_level": [],
+      "name": "mage-hand",
+      "index": 5,
+      "desc": "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration or until you dismiss it as an action. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again. You can use your action to control the hand. You can use the hand to manipulate an object, open an unlocked door or container, stow or retrieve an item from an open container, or pour the contents out of a vial. You can move the hand up to 30 feet each time you use it. The hand can't attack, activate magic items, or carry more than 10 pounds.",
+      "range": "30 feet",
+      "components": [
+          "V",
+          "S"
+      ],
+      "ritual": false,
+      "duration": "1 minute",
+      "concentration": false,
+      "casting_time": "1 action",
+      "level": 0,
+      "school": "conjuration",
+      "classes": [
+        "bard",
+        "sorcerer",
+        "warlock",
+        "wizard"
+      ],
+      "subclasses": ["lore"]
+    },
+    {
+      "higher_level": [],
+      "name": "light",
+      "index": 6,
+      "desc": "You touch one object that is no larger than 10 feet in any dimension. Until the spell ends, the object sheds bright light in a 20-foot radius and dim light for an additional 20 feet. The light can be colored as you like. Completely covering the object with something opaque blocks the light. The spell ends if you cast it again or dismiss it as an action. If you target an object held or worn by a hostile creature, that creature must succeed on a dexterity saving throw to avoid the spell.",
+      "range": "Touch",
+      "components": [
+          "V",
+          "M"
+      ],
+      "material": "A firefly or phosphorescent moss.",
+      "ritual": false,
+      "duration": "1 hour",
+      "concentration": false,
+      "casting_time": "1 action",
+      "level": 0,
+      "dc": {
+          "dc_type": "dex",
+          "dc_success": "none"
+      },
+      "school": "evocation",
+      "classes": [
+        "bard",
+        "cleric",
+        "sorcerer",
+        "wizard"
+      ],
+      "subclasses": [
+        "lore"
+      ]
+    },
+    {
+      "higher_level": [],
+      "name": "friends",
+      "index": 7,
+      "desc": "For the duration, you have advantage on all Charisma checks directed at one creature of your choice that isn't hostile toward you. When the spell ends, the creature realizes that you used magic to influence its mood and becomes hostile toward you. A creature prone to violence might attack you. Another creature might seek retribution in other ways, depending on the nature of your interaction with it.",
+      "range": "self",
+      "components": [
+          "S",
+          "M"
+      ],
+      "material": "makeup",
+      "ritual": false,
+      "duration": "1 minute",
+      "concentration": true,
+      "casting_time": "1 action",
+      "level": 0,
+      "school": "enchantment",
+      "classes": [
+        "bard",
+        "sorcerer",
+        "warlock",
+        "wizard"
+      ],
+      "subclasses": []
+    }
+
+  ]
+}

@@ -39,4 +39,5 @@ sneak attack
 * sorcerer = rabbi
 * warlock = Sikh
 
+## Spells/Miracles
 

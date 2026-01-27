@@ -140,8 +140,8 @@ class CharacterCreation(Page):
         self.save(player)
 
     def get_ability_value(self, index):
-        a = self.ability_page.abilities
-        return a[index].values[a[index].value_index]
+        a = self.ability_page.abilities[index]
+        return a.values[a.value_index] + a.bonus
     
     def calc_modifier(self, stat):
         val = (stat - 10) / 2
