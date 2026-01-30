@@ -41,3 +41,40 @@ sneak attack
 
 ## Spells/Miracles
 
+### db template 
+  {
+    "higher_level": string,
+    "index": int,
+    "name": string,
+    "desc": string,
+    "range": string (should be int),
+    "components": [string],
+    "material":? string
+    "ritual": bool,
+    "duration": string (should be int),
+    "concentration": bool,
+    "casting_time": string,
+    "level": int,
+    "damage":? {
+      "damage_type": string,
+      <!-- "die": int,
+      "amount_at_level": int -->
+      "damage_at_character_level": {
+        "1": string,
+        "5": string,
+        "11": string,
+        "17": string
+      }
+    },
+    "dc":? {
+      "dc_type": string,
+      "dc_success": string
+    },
+    "area_of_effect":? {
+      "type": "cone",
+      "size": 15
+    },
+
+    "school": string,
+    "classes": [string]
+  }

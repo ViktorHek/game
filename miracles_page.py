@@ -3,22 +3,130 @@ from pathlib import Path
 import json
 
 from page import Page
-from font import PlainText, Title
+from font import PlainText, Title, SmallTitle, Text
+from button import CheckBoxList
+from text_box import TextBox
+from scroll_bar import ScrollBar
+
 
 class MiraclesPage(Page):
     def __init__(self, game):
         super().__init__(game)
-        self.left_title = Title("Miracles", self.left_title_container)
-        self.right_title = Title("Description", self.right_title_container)
+        self.right_title = Title("Miracles", self.right_title_container)
         self.complete = False
+        cantrip_path = Path("data/miracles/cantrips.json")
+        self.db_cantrip = json.loads(cantrip_path.read_text())
+        lv1_path = Path("data/miracles/cantrips.json")
+        self.db_lv1 = json.loads(lv1_path.read_text())
+        margin = 8
+        self.display_spell = self.db_cantrip[0]
+
+        self.left_title = Title(self.display_spell["name"], self.left_title_container)
+
+        # Left side
+        self.stats_container = pygame.Rect(
+            (self.left_page.left + margin, self.left_title_container.bottom + margin), 
+            ((self.left_page.width/2) - (margin*2), 100)
+        )
+        self.range = SmallTitle(f"Range: {self.display_spell["range"]}", self.stats_container, centered=False)
+        self.get_miracle_info(margin)
+
+        # Right side
+        self.text_box_container = self.right_page.copy()
+        info_text = "How you practice your faith effect everything from spells, abilities and personality. You can change your religion later."
+        self.text_box = TextBox(info_text, self.text_box_container)
+        self.text_box.rect.bottom = self.right_page.bottom
+
+        self.check_box_container = self.right_page.copy()
+        self.check_box_container.y += self.right_title.rect.height + 16
+        self.check_box_container.height = self.right_page.height - self.right_title_container.height - self.text_box.rect.height
+        self.spell_list = self.get_spell_list()
+        self.check_box_list = CheckBoxList(
+            game,
+            self.check_box_container,
+            self.spell_list
+        )
+        self.scroll_bar_container = pygame.Rect(
+            (self.right_page.right - 16, self.right_title_container.bottom), 
+            (16, self.check_box_container.height)
+        )
+        self.scroll_bar = ScrollBar(self.scroll_bar_container)
+        # self.render_text()
+
+    def get_spell_list(self):
+        arr = []
+        for value in self.db_cantrip:
+            arr.append({"id": value["name"], "text": value["name"], "value": value["index"]})
+        return arr
         
+    def get_miracle_info(self, margin):
+        self.primary_skill_container = self.stats_container.copy()
+        self.primary_skill_container.y += self.range.rect.height + margin
+        self.primary_skill = Text(
+            f"Casting Time: {self.display_spell["casting_time"]}", 
+            self.primary_skill_container, 
+            centered=False, 
+            has_underline=True
+        )
+        self.secondary_skill_container = self.primary_skill_container.copy()
+        self.secondary_skill_container.y += self.primary_skill.rect.height + margin
+        self.secondary_skill = Text(
+            f"Duration: {self.display_spell["duration"]}", 
+            self.secondary_skill_container, 
+            centered=False, 
+            has_underline=True
+        )
+        self.desc_text_box_container = pygame.Rect(
+            (self.left_page.left, self.secondary_skill.rect.bottom + margin * 4),
+            (self.left_page.width, self.left_page.bottom - self.secondary_skill.rect.bottom - margin*2)
+        )
+        self.desc_text_box = TextBox(self.display_spell["desc"], self.desc_text_box_container)
+        self.desc_text_box.rect.center = self.desc_text_box_container.center
+
+    def render_text(self):
+        self.left_title = Title(self.display_spell["name"], self.left_title_container)
+        self.range = SmallTitle(f"Range: {self.display_spell["range"]}", self.stats_container, centered=False)
+        self.primary_skill = Text(
+            f"Casting Time: {self.display_spell["casting_time"]}", 
+            self.primary_skill_container, 
+            centered=False, 
+            has_underline=True
+        )
+        self.secondary_skill = Text(
+            f"Duration: {self.display_spell["duration"]}", 
+            self.secondary_skill_container, 
+            centered=False, 
+            has_underline=True
+        )
+        self.desc_text_box = TextBox(self.display_spell["desc"], self.desc_text_box_container)
+        self.desc_text_box.rect.center = self.desc_text_box_container.center
+
+
     def check_click(self):
-        pass
+        id = self.check_box_list.check_click()
+        if id:
+            self.display_spell = self.db_cantrip[int(id)]
+            self.complete = True
+            self.render_text()
+        if id == 0:
+            self.display_spell = self.db_cantrip[int(id)]
+            self.complete = True
+            self.render_text()
 
     def update(self):
-        pass
+        self.check_box_list.update()
 
     def blitme(self, screen):
         super().blitme(screen)
         screen.blit(self.left_title.image, self.left_title.rect)
         screen.blit(self.right_title.image, self.right_title.rect)
+
+        screen.blit(self.right_title.image, self.right_title.rect)
+        screen.blit(self.left_title.image, self.left_title.rect)
+        self.check_box_list.draw_list(screen)
+        screen.blit(self.scroll_bar.image, self.scroll_bar.rect)
+        screen.blit(self.text_box.image, self.text_box.rect)
+        screen.blit(self.range.image, self.range.rect)
+        screen.blit(self.primary_skill.image, self.primary_skill.rect)
+        screen.blit(self.secondary_skill.image, self.secondary_skill.rect)
+        screen.blit(self.desc_text_box.image, self.desc_text_box.rect)

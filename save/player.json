@@ -1,8 +1,8 @@
 {
     "general": {
-        "name": "fwfwe",
-        "age": "333",
-        "gender": "female",
+        "name": "",
+        "age": 0,
+        "gender": "",
         "race": "half-orc",
         "size": "medium",
         "speed": 30,
@@ -15,9 +15,9 @@
         "level": 1
     },
     "religion": {
-        "practice": "paladin",
+        "practice": "sikh",
         "faith": "",
-        "hit_die": 10
+        "hit_die": 8
     },
     "stats": {
         "strength": 0,
