@@ -6,7 +6,7 @@ from player import Player
 from settings import Settings
 from start_screen import StartScreen
 from character_creation import CharacterCreation
-# from map import Map
+from map import Map
 
 class Main():
     def __init__(self):
@@ -23,7 +23,7 @@ class Main():
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption('Akavir: God of none')
         self.animations = pygame.sprite.Group()
-        # self.map = Map()
+        self.map = Map()
         self.player = Player(self)
         self.start_screen = StartScreen(self)
         self.character_creation = CharacterCreation(self)
@@ -44,7 +44,7 @@ class Main():
 
     def update_screen(self):
         self.screen.fill((100,100,100))
-        # self.map.blit_all_tiles(self.screen)
+        self.map.blit_all_tiles(self.screen)
         if self.game_pause:
             if self.character_creation_active:
                 self.character_creation.blitme(self.screen)

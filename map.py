@@ -23,6 +23,10 @@ class Map:
     
     def is_colliding(self, pos):
         collide = False
+        if len(self.tmxdata.tiles) == pos[1]:
+            return True
+        if len(self.tmxdata.tiles[pos[1]]) == pos[0]:
+            return True
         layers = self.tmxdata.tiles[pos[1]][pos[0]]["layers"]
         for layer in layers:
             if layer.collision == 1 and layer.exist == True:
@@ -46,7 +50,7 @@ class Map:
 
 class Tmx:
     def __init__(self):
-        self.tmxdata = load_pygame('map/example_maptmx.tmx')
+        self.tmxdata = load_pygame('map/fan_tasy_1.tmx')
         self.settings = Settings()
         self.y_tiles = self.settings.y_tiles
         self.x_tiles = self.settings.x_tiles
@@ -54,10 +58,9 @@ class Tmx:
         self.screen_height = self.settings.screen_height
         self.size = self.settings.tile_size
         self.layers_amount = 0
-        self.tiles = self.get_tiles()
         self.base_tile_prop = {
             'id': -1, 
-            'animation': 0, 
+            # 'animation': 0, 
             'collision': 0, 
             'is_overlay': 0, 
             'type': '', 
@@ -67,6 +70,7 @@ class Tmx:
             'frames': [],
             'exist': True
         }
+        self.tiles = self.get_tiles()
     
     def get_tiles(self):
         tiles = list(range(0, self.y_tiles))
@@ -78,6 +82,7 @@ class Tmx:
             self.layers_amount = layer_index + 1
             for tile in layer.tiles():
                 properties = self.try_get_prop(tile, layer_index)
+                # print(properties)
                 tile_obj = Tile(tile, layer_index, properties)                
                 tiles[tile[1]][tile[0]]["layers"].append(tile_obj)
         return tiles
@@ -101,7 +106,7 @@ class Tile:
         self.layer = layer_index
         properties = properties
         self.id = properties["id"]
-        self.animation = properties["animation"]
+        # self.animation = properties["animation"]
         self.collision = properties["collision"]
         self.is_overlay = properties["is_overlay"]
         self.type = properties["type"] 
