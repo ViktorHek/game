@@ -40,6 +40,7 @@ class Map:
                     if layer.exist:
                         img = pygame.transform.scale(layer.image, (self.size, self.size))
                         screen.blit(img, (x["x"], x["y"]))
+        screen.blit(self.tmxdata.test, (0,0))
             
     def change_state(self, pos):
         x = int((pos[0] + self.size / 2) // self.size)
@@ -58,6 +59,7 @@ class Tmx:
         self.screen_height = self.settings.screen_height
         self.size = self.settings.tile_size
         self.layers_amount = 0
+        self.test = pygame.image.load('assets/New Piskel-1.bmp').convert_alpha()
         self.base_tile_prop = {
             'id': -1, 
             # 'animation': 0, 
@@ -121,3 +123,21 @@ class Tile:
             self.exist = False
         else:
             self.exist = True
+
+
+# # just iterate over animated tiles and demo them
+
+# # tmx_map is a TiledMap object
+# # tile_properties is a dictionary of all tile properties
+
+# # iterate over the tile properties
+# for gid, props in tmx_map.tile_properties.items():
+
+#    # iterate over the frames of the animation
+#    # if there is no animation, this list will be empty
+#    for animation_frame in props['frames']:
+   
+#        # do something with the gid and duration of the frame
+#        # this may change in the future, as it is a little awkward now
+#        image = tmx_map.get_tile_image_by_gid(gid)
+#        duration = animation_frame.duration
