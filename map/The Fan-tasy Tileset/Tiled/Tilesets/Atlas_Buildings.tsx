@@ -635,7 +635,7 @@
  <tile id="69">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -1362,7 +1362,7 @@
  <tile id="146">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -1659,7 +1659,7 @@
  <tile id="176">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -1670,7 +1670,7 @@
  <tile id="177">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -2367,7 +2367,7 @@
  <tile id="252">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -2811,7 +2811,7 @@
  <tile id="295">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -3889,7 +3889,7 @@
  <tile id="409">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>
@@ -3900,7 +3900,7 @@
  <tile id="410">
   <properties>
    <property name="collision" type="int" value="0"/>
-   <property name="is_overlay" value="1"/>
+   <property name="is_overlay" value="0"/>
    <property name="type" value="door"/>
    <property name="value" value="closed"/>
   </properties>

@@ -1,6 +1,5 @@
 import sys
 import pygame
-from pytmx.util_pygame import load_pygame
 
 from player import Player
 from settings import Settings
@@ -32,27 +31,40 @@ class Main():
         while self.running:
             self.check_event()
             if self.game_pause:
-                if self.character_creation_active:
-                    self.character_creation.update()
-                else:
-                    self.start_screen.update()
+                self.update_pause_menu()
             else:
-                self.player.update()
+                self.update_world()
             self.animations.update()
             self.update_screen()
             self.clock.tick(60)
 
+    def update_pause_menu(self):
+        if self.character_creation_active:
+            self.character_creation.update()
+        else:
+            self.start_screen.update()
+
+    def update_world(self):
+        self.player.update()
+
     def update_screen(self):
         self.screen.fill((100,100,100))
-        self.map.blit_all_tiles(self.screen)
         if self.game_pause:
-            if self.character_creation_active:
-                self.character_creation.blitme(self.screen)
-            else:
-                self.start_screen.blitme(self.screen)
+            self.blit_pause_menu()
         else:
-            self.screen.blit(self.player.image, self.player.rect)
+            self.blit_world()
         pygame.display.flip()
+
+    def blit_pause_menu(self):
+        if self.character_creation_active:
+            self.character_creation.blitme(self.screen)
+        else:
+            self.start_screen.blitme(self.screen)
+
+    def blit_world(self):
+        self.map.blit_all_tiles(self.screen)
+        self.screen.blit(self.player.image, self.player.rect)
+        self.map.blit_overlay(self.player.rect, self.screen)
 
     def check_event(self):
         pygame.event.set_blocked(pygame.MOUSEWHEEL)

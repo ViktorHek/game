@@ -36,12 +36,32 @@ class Map:
     def blit_all_tiles(self, screen):
         for y in self.tmxdata.tiles:
             for x in y:
-                for layer in x["layers"]:
-                    if layer.exist:
-                        img = pygame.transform.scale(layer.image, (self.size, self.size))
-                        screen.blit(img, (x["x"], x["y"]))
-        screen.blit(self.tmxdata.test, (0,0))
-            
+                for tile in x["layers"]:
+                    if tile.exist:
+                        self.blit_tile(tile, x["x"], x["y"], screen)
+                        tile.update_frame_counter()
+    
+    def blit_overlay(self, player_rect, screen):
+        x = int((player_rect.x + self.size / 2) // self.size)
+        y = int((player_rect.y + self.size / 2) // self.size)
+        positions = [
+            (x, y),
+            (x + 1, y),
+            (x, y + 1),
+            (x + 1, y + 1),
+        ]
+        for pos in positions:
+            for tile in self.tmxdata.tiles[pos[1]][pos[0]]["layers"]:
+                if tile.is_overlay:
+                    self.blit_tile(tile, self.tmxdata.tiles[pos[1]][pos[0]]["x"], self.tmxdata.tiles[pos[1]][pos[0]]["y"], screen)
+    
+    def blit_tile(self, tile, x, y, screen):
+        img = tile.image
+        if len(tile.frame_images) > 0:
+            img = tile.frame_images[tile.frame_index]
+        transformed_image = pygame.transform.scale(img, (self.size, self.size))
+        screen.blit(transformed_image, (x, y))
+
     def change_state(self, pos):
         x = int((pos[0] + self.size / 2) // self.size)
         y = int((pos[1] + self.size / 2) // self.size)
@@ -59,10 +79,8 @@ class Tmx:
         self.screen_height = self.settings.screen_height
         self.size = self.settings.tile_size
         self.layers_amount = 0
-        self.test = pygame.image.load('assets/New Piskel-1.bmp').convert_alpha()
         self.base_tile_prop = {
             'id': -1, 
-            # 'animation': 0, 
             'collision': 0, 
             'is_overlay': 0, 
             'type': '', 
@@ -70,7 +88,8 @@ class Tmx:
             'width': str(self.size), 
             'height': str(self.size), 
             'frames': [],
-            'exist': True
+            'exist': True,
+            'frame_images': []
         }
         self.tiles = self.get_tiles()
     
@@ -80,11 +99,15 @@ class Tmx:
             tiles[y] = list(range(0, self.x_tiles))
             for x in tiles[y]:
                 tiles[y][x] = {"x": x * self.size, "y": y * self.size, "layers": []}
+        # self.tmxdata.get_tile_image()
         for layer_index, layer in enumerate(self.tmxdata):
             self.layers_amount = layer_index + 1
             for tile in layer.tiles():
                 properties = self.try_get_prop(tile, layer_index)
-                # print(properties)
+                properties["frame_images"] = []
+                for frame in properties["frames"]:
+                    img = self.tmxdata.get_tile_image_by_gid(frame.gid)
+                    properties["frame_images"].append(img)
                 tile_obj = Tile(tile, layer_index, properties)                
                 tiles[tile[1]][tile[0]]["layers"].append(tile_obj)
         return tiles
@@ -108,7 +131,6 @@ class Tile:
         self.layer = layer_index
         properties = properties
         self.id = properties["id"]
-        # self.animation = properties["animation"]
         self.collision = properties["collision"]
         self.is_overlay = properties["is_overlay"]
         self.type = properties["type"] 
@@ -116,6 +138,9 @@ class Tile:
         self.width = str(self.size)
         self.height = str(self.size) 
         self.frames = properties["frames"]
+        self.frame_images = properties["frame_images"]
+        self.frame_counter = 0
+        self.frame_index = 0
         self.exist = True
     
     def change_state(self):
@@ -124,20 +149,10 @@ class Tile:
         else:
             self.exist = True
 
-
-# # just iterate over animated tiles and demo them
-
-# # tmx_map is a TiledMap object
-# # tile_properties is a dictionary of all tile properties
-
-# # iterate over the tile properties
-# for gid, props in tmx_map.tile_properties.items():
-
-#    # iterate over the frames of the animation
-#    # if there is no animation, this list will be empty
-#    for animation_frame in props['frames']:
-   
-#        # do something with the gid and duration of the frame
-#        # this may change in the future, as it is a little awkward now
-#        image = tmx_map.get_tile_image_by_gid(gid)
-#        duration = animation_frame.duration
+    def update_frame_counter(self):
+        self.frame_counter += 1
+        if self.frame_counter > 10:
+            self.frame_counter = 0
+            self.frame_index += 1
+        if self.frame_index >= len(self.frame_images):
+            self.frame_index = 0 
