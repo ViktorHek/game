@@ -39,7 +39,7 @@
     "higher_level": "",
     "index": 1,
     "name": "truth strike",
-    "desc": "You point a finger at a target and gain a brief insight into the target's defenses. On your next turn, you gain advantage on your attack against the target, provided that this spell hasn't ended.",
+    "desc": "You point a finger at your targets and gain a brief insight into the target's defenses. On your next turn, you gain advantage on your attack against the target, provided that this spell hasn't ended.",
     "range": "30 feet",
     "components": [
         "S"
@@ -55,7 +55,7 @@
         "target": "self",
         "duration": "use"
       }
-    ], 
+    ],
     "school": "divination",
     "classes": [
       "apostle",
@@ -118,7 +118,8 @@
     "casting_time": "1 minute",
     "level": 0,
     "school": "transmutation",
-    "classes": [
+    "classes": [],
+    "prev_classes": [
       "cleric",
       "apostle",
       "guru",
@@ -142,7 +143,8 @@
     "casting_time": "1 action",
     "level": 0,
     "school": "conjuration",
-    "classes": [
+    "classes": [],
+    "prev_classes": [
       "apostle",
       "rabbi",
       "sikh",
@@ -170,18 +172,19 @@
         "dc_success": "none"
     },
     "school": "evocation",
-    "classes": [
+    "prev_classes": [
       "apostle",
       "cleric",
       "rabbi",
       "imam"
-    ]
+    ],
+    "classes": []
   },
   {
     "higher_level": "",
     "name": "friends",
     "index": 6,
-    "desc": "For the duration, you have advantage on all Charisma checks directed at one creature of your choice that isn't hostile toward you. When the spell ends, the creature realizes that you used magic to influence its mood and becomes hostile toward you. A creature prone to violence might attack you. Another creature might seek retribution in other ways, depending on the nature of your interaction with it.",
+    "desc": "For the duration, you have advantage on all Charisma checks directed at one creature. When the spell ends, the creature realizes that you used magic to influence its mood and becomes hostile toward you. A creature prone to violence might attack you. Another creature might seek retribution in other ways, depending on the nature of your interaction with it.",
     "range": "self",
     "components": [
         "S",
