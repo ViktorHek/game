@@ -28,15 +28,58 @@ sneak attack
 0 = amount of d6
 
 * cleric = cleric
-* wisard = imam
+* wizard = imam
 * paladin = paladin
 * fighter = prest
 * monk = monk
 * barbarian = martyr
 * bard = apostle
-* durid = Guru
+* druid = Guru
 * rogue = virgin
 * sorcerer = rabbi
 * warlock = Sikh
 
+## Spells/Miracles
 
+### db template 
+  {
+    "higher_level": string,
+    "index": int,
+    "name": string,
+    "desc": string,
+    "range": string (should be int),
+    "components": [string],
+    "material":? string
+    "ritual": bool,
+    "duration": string (should be int),
+    "concentration": bool,
+    "casting_time": string,
+    "level": int,
+    "damage":? {
+      "damage_type": string,
+      "die": int,
+      "level": {
+        "1": int,
+        "5": int,
+        "11": int,
+        "17": int
+      }
+    },
+    "dc":? {
+      "dc_type": string,
+      "dc_success": string
+    },
+    "area_of_effect":? {
+      "type": "cone",
+      "size": 15
+    },
+    "effect":? [
+      {
+        "type": "disadvantage",
+        "target": "target",
+        "duration": "use"
+      }
+    ],
+    "school": string,
+    "classes": [string]
+  }

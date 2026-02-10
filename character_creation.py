@@ -20,18 +20,11 @@ class CharacterCreation(Page):
     def __init__(self, game):
         super().__init__(game)
         self.game = game
-
-
         self.religion_page = ReligionPage(self.game)
         self.race_page = RacePage(self.game)
         self.ability_page = AbilityPage(self.game)
         self.miracles_page = MiraclesPage(self.game)
         self.submit_page = SubmitPage(self.game)
-
-
-
-
-
         # self.pages_completed = 0
         self.general_page = GeneralPage(game)
         self.pages = ["general", "religion", "race", "ability", "miracles", "submit"]
@@ -147,8 +140,8 @@ class CharacterCreation(Page):
         self.save(player)
 
     def get_ability_value(self, index):
-        a = self.ability_page.abilities
-        return a[index].values[a[index].value_index]
+        a = self.ability_page.abilities[index]
+        return a.values[a.value_index] + a.bonus
     
     def calc_modifier(self, stat):
         val = (stat - 10) / 2
@@ -160,41 +153,56 @@ class CharacterCreation(Page):
         # self.save(player)
 
     def get_save(self):
-        with open(self.db_url, "r") as db:
+        with open("save/player.json", "r") as db:
             return json.load(db)
 
     def save(self, player):
-        with open(self.db_url, "w") as db:
+        with open("save/player.json", "w") as db:
             json.dump(player, db, indent=4)
+
+    def reset_next_page(self, page):
+        if page == "general":
+            pass
+            # self.general_page.reset()
+        elif page == "religion":
+            self.religion_page.reset()
+        elif page == "race":
+            pass
+            # self.race_page.reset()
+        elif page == "ability":
+            self.ability_page.reset()
+        elif page == "miracles":
+            self.miracles_page.reset()
+        elif page == "submit":
+            pass
+            # self.submit_page.reset()
+        else:
+            pass
 
     def handle_click(self):
         self.nav_bar.handle_click()
         if self.page != self.nav_bar.current:
             self.handle_save(self.page)
+            self.reset_next_page(self.nav_bar.current)  
         self.page = self.nav_bar.current
         if self.page == "general":
             self.general_page.check_click()
         elif self.page == "religion":
-            self.religion_page = ReligionPage(self.game)
             self.religion_page.check_click()
         elif self.page == "race":
-            self.race_page = RacePage(self.game)
             self.race_page.check_click()
         elif self.page == "ability":
-            self.ability_page = AbilityPage(self.game)
             self.ability_page.check_click()
         elif self.page == "miracles":
-            self.miracles_page = MiraclesPage(self.game)
             self.miracles_page.check_click()
         elif self.page == "submit":
-            self.submit_page = SubmitPage(self.game)
             self.submit_page.check_click()
         else:
             self.religion_page.check_click()
-        completed = self.get_completed_amount()
-        self.nav_bar.update_nav(completed)
+        # completed = self.get_completed_amount()
+        # self.nav_bar.update_nav(completed)
 
     def handle_key(self, key):
         self.general_page.handle_key(key)
-        completed = self.get_completed_amount()
-        self.nav_bar.update_nav(completed)
+        # completed = self.get_completed_amount()
+        # self.nav_bar.update_nav(completed)

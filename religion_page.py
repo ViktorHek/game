@@ -11,11 +11,10 @@ from scroll_bar import ScrollBar
 class ReligionPage(Page):
     def __init__(self, game):
         super().__init__(game)
-        classes_path = Path("data/classes.json")
-        self.db_classes = json.loads(classes_path.read_text())
+        self.db_classes = super().get_db("data/classes.json")
         margin = 8
         self.init_class = self.db_classes["guru"]
-        self.current_class = None
+        self.current_class = self.db_classes["guru"]
         # Left side
         self.left_title = Title(self.init_class["name"], self.left_title_container)
         self.stats_container = pygame.Rect(
@@ -48,6 +47,12 @@ class ReligionPage(Page):
         )
         self.scroll_bar = ScrollBar(self.scroll_bar_container)
         # self.render_text()
+
+    def reset(self):
+        player = super().get_db(self.player_url)
+        if player["religion"]["practice"]:
+            self.current_class = self.db_classes[player["religion"]["practice"]]
+            self.render_text()
 
     def get_class_data(self, margin):
         self.primary_skill_container = self.stats_container.copy()
