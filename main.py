@@ -24,7 +24,7 @@ class Main():
         self.animations = pygame.sprite.Group()
         self.map = Map()
         self.player = Player(self)
-        self.npc = Npc(self)
+        self.npc = Npc(self, self.map, movement_pattern='random')
         self.start_screen = StartScreen(self)
         self.character_creation = CharacterCreation(self)
 

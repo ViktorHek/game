@@ -42,6 +42,8 @@ class Map:
 
     def is_colliding(self, pos):
         collide = False
+        if pos[0] < 0 or pos[1] < 0:
+            return True
         if len(self.tiles) == pos[1]:
             return True
         if len(self.tiles[pos[1]]) == pos[0]:

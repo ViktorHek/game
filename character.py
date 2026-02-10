@@ -1,5 +1,4 @@
 import pygame
-import random
 
 class Character():
     def __init__(self, game):
@@ -45,10 +44,6 @@ class Character():
         x = self.rect.x + (size // 2)
         y = self.rect.y + (size // 2)
         extra = 10
-        col_left = self.rect.x == 0 and dir == "left"
-        col_up = self.rect.y == 0 and dir == "up"
-        if col_left or col_up:
-            return False
         pos_x_1 = (x - extra) // size
         pos_x_2 = (x + extra) // size
         pos_y_1 = (y - extra) // size
