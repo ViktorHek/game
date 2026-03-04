@@ -38,10 +38,11 @@ class BattleMap(Map):
                     grid.blit(horizontal_avaliable, (x, y))
                     grid.blit(horizontal_avaliable, (x, y + self.size - 1))
                 else:
-                    grid.blit(vertical, (x, y))
-                    grid.blit(vertical, (x + self.size - 1, y))
-                    grid.blit(horizontal, (x, y))
-                    grid.blit(horizontal, (x, y + self.size - 1))
+                    pass
+                    # grid.blit(vertical, (x, y))
+                    # grid.blit(vertical, (x + self.size - 1, y))
+                    # grid.blit(horizontal, (x, y))
+                    # grid.blit(horizontal, (x, y + self.size - 1))
                 x += self.size
             x = 0
             y += self.size

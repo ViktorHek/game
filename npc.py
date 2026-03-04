@@ -3,7 +3,7 @@ from character import Character
 import random
 
 class Npc(Character):
-    def __init__(self, id, pos, type='goblin', movement_pattern=None):
+    def __init__(self, id, pos, type='goblin', is_ally=False, movement_pattern=None):
         super().__init__()
         self.starting_position = pos
         self.prev_pos = pos
@@ -11,6 +11,7 @@ class Npc(Character):
         self.rect.y = self.size * pos[1]
         self.type = type
         self.moving_to = None
+        self.is_ally = is_ally
         self.id = id
         self.dir_options = ['up', 'down', 'right', 'left']
         self.movement_pattern = movement_pattern
@@ -26,6 +27,11 @@ class Npc(Character):
             types = {
                 'idle': 'assets/tileset/Characters/Goblin/PNG/spr_idle_strip9.png',
                 'attack': 'assets/tileset/Characters/Goblin/PNG/spr_attack_strip10.png'
+            }
+        elif self.type == 'human':
+            types = {
+                'idle': 'assets/tileset/Characters/Human/IDLE/base_idle_strip9.png',
+                'attack': 'assets/tileset/Characters/Human/ATTACK/base_attack_strip10.png'
             }
         else:
             types = {

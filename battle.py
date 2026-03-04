@@ -16,10 +16,18 @@ class Battle():
         self.map = BattleMap()
         self.player = Player([5, 10])
         self.npc_1 = Npc('jon', (6, 3))
-        self.npc_2 = Npc('bob', (24, 3))
-        self.npc_3 = Npc('mike', (5, 11))
-        self.ui = BattleUI()
-        self.npc_group = [self.npc_1, self.npc_2, self.npc_3]
+        self.npc_2 = Npc('bob', (24, 3), type='skeleton')
+        self.npc_3 = Npc('mike', (20, 11))
+        # make this player class
+        self.npc_4 = Npc('buddy', (6, 11), type='human', is_ally=True)
+        self.ui = BattleUI({
+            f"{self.player.id}": self.player, 
+            f"{self.npc_1.id}": self.npc_1, 
+            f"{self.npc_2.id}": self.npc_2, 
+            f"{self.npc_3.id}": self.npc_3, 
+            f"{self.npc_4.id}": self.npc_4 
+        })
+        self.npc_group = [self.npc_1, self.npc_2, self.npc_3, self.npc_4]
         self.player_moves_amount = self.player.data.speed // 10
         self.available_tiles = [] 
         self.unavailable_tiles = []
@@ -45,12 +53,13 @@ class Battle():
             [x, y - 1],
             [x, y + 1],
         ]
-        for pos in dirs:
-            collision = self.map.get_tile_collision(pos[0], pos[1])
-            if collision == None:
-                self.available_tiles.append([pos[0], pos[1]])
-            else:
-                self.unavailable_tiles.append([pos[0], pos[1]])
+        if self.player_moves_amount:
+            for pos in dirs:
+                collision = self.map.get_tile_collision(pos[0], pos[1])
+                if collision == None:
+                    self.available_tiles.append([pos[0], pos[1]])
+                else:
+                    self.unavailable_tiles.append([pos[0], pos[1]])
 
     def update(self):
         if self.walking_animation:

@@ -4,6 +4,12 @@
 
 pixel perfect collision - https://www.youtube.com/watch?v=tJiKYMQJnYg
 
+# DnD rules
+calc attack damage
+melee = strength modifyer
+range = dexterity modifyer
+magic = depends
+
 # Akavir
 
 ## changes
