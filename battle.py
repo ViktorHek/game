@@ -141,7 +141,10 @@ class Battle():
             self.player.moving_to = [x, y]
             self.player.handle_movement(key, True)
 
-    def handle_action(self, action):
+    def handle_action(self):
+        pass
+
+    def handle_action_wheel(self, action):
         print(action)
 
     def handle_click(self):
@@ -149,7 +152,7 @@ class Battle():
         if self.action_wheel_target:
             action = self.action_wheel.handle_click(pos)
             if action:
-                self.handle_action(action)
+                self.handle_action_wheel(action)
             else:
                 self.action_wheel_target = None
         else:
