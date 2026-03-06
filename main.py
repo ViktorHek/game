@@ -77,6 +77,7 @@ class Main():
                     if self.over_world.start_battle:
                         self.battle_active = True
                         self.over_world.start_battle = False
+                        self.battle.init_battle()
 
 
 if __name__ == '__main__':

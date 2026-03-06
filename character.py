@@ -13,6 +13,8 @@ class Character():
         self.moving_left = False
         self.moving_up = False
         self.moving_down = False
+        self.max_hp = 10
+        self.hp = 10
         self.dir = ''
         self.speed = 1
         self.inventory = []

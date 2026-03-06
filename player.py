@@ -16,6 +16,7 @@ class Player(Character):
             'attack': self.load_animation('attack')
         }
         self.data = PlayerData()
+        self.hp = self.data.max_hp
 
     def load_animation(self, type):
         arr = []
@@ -78,6 +79,7 @@ class PlayerData:
         self.proficiencies = []
         self.miracles = []
         self.stats = None
+        self.max_hp = 1
         self.load()
 
     def load(self):
@@ -97,18 +99,19 @@ class PlayerData:
         self.proficiencies = data["proficiencies"]
         self.miracles = data["miracles"]
         self.stats = PlayerStats(data["stats"])
+        self.max_hp = self.hit_die // 2 + 1 + self.stats.constitution_modifier
 
 class PlayerStats:
     def __init__(self, stats):
-        self.strength = stats["strength"],
-        self.wisdom = stats["wisdom"],
-        self.constitution = stats["constitution"],
-        self.dexterity = stats["dexterity"],
-        self.intelligence = stats["intelligence"],
-        self.charisma = stats["charisma"],
-        self.strength_modifier = stats["strength_modifier"],
-        self.wisdom_modifier = stats["wisdom_modifier"],
-        self.constitution_modifier = stats["constitution_modifier"],
-        self.dexterity_modifier = stats["dexterity_modifier"],
-        self.intelligence_modifier = stats["intelligence_modifier"],
+        self.strength = stats["strength"]
+        self.wisdom = stats["wisdom"]
+        self.constitution = stats["constitution"]
+        self.dexterity = stats["dexterity"]
+        self.intelligence = stats["intelligence"]
+        self.charisma = stats["charisma"]
+        self.strength_modifier = stats["strength_modifier"]
+        self.wisdom_modifier = stats["wisdom_modifier"]
+        self.constitution_modifier = stats["constitution_modifier"]
+        self.dexterity_modifier = stats["dexterity_modifier"]
+        self.intelligence_modifier = stats["intelligence_modifier"]
         self.charisma_modifier = stats["charisma_modifier"]

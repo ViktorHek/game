@@ -1,9 +1,11 @@
 import sys
 import pygame
+from random import randrange
 
 from player import Player
 from settings import Settings
 from npc import Npc
+from ally import Ally
 from battle_map import BattleMap
 from action_wheel import ActionWheel
 from battle_ui import BattleUI
@@ -12,35 +14,47 @@ class Battle():
     def __init__(self):
         self.game_pause = False
         self.walking_animation = False
+        self.turn_order = []
+        self.current_active_character_id = 'player'
         self.settings = Settings()
         self.map = BattleMap()
         self.player = Player([5, 10])
         self.npc_1 = Npc('jon', (6, 3))
         self.npc_2 = Npc('bob', (24, 3), type='skeleton')
         self.npc_3 = Npc('mike', (20, 11))
-        # make this player class
-        self.npc_4 = Npc('buddy', (6, 11), type='human', is_ally=True)
+        self.ally_1 = Ally(id='buddy', pos=(6, 11))
         self.ui = BattleUI({
             f"{self.player.id}": self.player, 
             f"{self.npc_1.id}": self.npc_1, 
             f"{self.npc_2.id}": self.npc_2, 
             f"{self.npc_3.id}": self.npc_3, 
-            f"{self.npc_4.id}": self.npc_4 
+            f"{self.ally_1.id}": self.ally_1 
         })
-        self.npc_group = [self.npc_1, self.npc_2, self.npc_3, self.npc_4]
+        self.npc_group = [self.npc_1, self.npc_2, self.npc_3, self.ally_1]
         self.player_moves_amount = self.player.data.speed // 10
         self.available_tiles = [] 
         self.unavailable_tiles = []
         self.load_init_data()
         self.action_wheel_target = None
         self.action_wheel = ActionWheel()
-    
+
+    def init_battle(self):
+        self.roll_inisiative()
+
     def load_init_data(self):
         for npc in self.npc_group:
             pos = npc.get_coordinates()
             self.map.mobile_collision_grid[npc.id] = pos
         self.get_tile_availability()
         self.map.update_grid(self.available_tiles, self.unavailable_tiles)
+
+    def roll_inisiative(self):
+        arr = [self.player.id, self.npc_1.id, self.npc_2.id, self.npc_3.id, self.ally_1.id]
+        dic = {}
+        for char in arr:
+            dic[char] = randrange(1,21)
+        asc = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1])}
+        print(asc)
 
     def get_tile_availability(self):
         self.available_tiles = []
@@ -144,8 +158,12 @@ class Battle():
     def handle_action(self):
         pass
 
+    def melee_attack(self):
+        pass
+
     def handle_action_wheel(self, action):
-        print(action)
+        if action == 'primary':
+            self.melee_attack()
 
     def handle_click(self):
         pos = pygame.mouse.get_pos()

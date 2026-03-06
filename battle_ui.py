@@ -12,7 +12,7 @@ class BattleUI():
         self.render_characters_display()
         self.render_current_character()
         action = 1
-        bonus_action = 0
+        bonus_action = 1
         speed = 10
         self.render_action_pannel(action, bonus_action, speed)
         # self.action_pannel = pygame.Surface(())
