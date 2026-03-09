@@ -23,6 +23,7 @@ class Battle():
         self.npc_2 = Npc('bob', (24, 3), type='skeleton')
         self.npc_3 = Npc('mike', (20, 11))
         self.ally_1 = Ally(id='buddy', pos=(6, 11))
+        # self.get_ui()
         self.ui = BattleUI({
             f"{self.player.id}": self.player, 
             f"{self.npc_1.id}": self.npc_1, 
@@ -37,9 +38,26 @@ class Battle():
         self.load_init_data()
         self.action_wheel_target = None
         self.action_wheel = ActionWheel()
+        self.init_battle() # call from parent instead
+
+    def get_ui(self):
+        dic = {}
+        for id in self.turn_order:
+            if id == self.player.id:
+                dic[f"{id}"] = self.player
+            elif id == self.npc_1.id:
+                dic[f"{id}"] = self.npc_1
+            elif id == self.npc_2.id:
+                dic[f"{id}"] = self.npc_2
+            elif id == self.npc_3.id:
+                dic[f"{id}"] = self.npc_3
+            elif id == self.ally_1.id:
+                dic[f"{id}"] = self.ally_1
+        self.ui = BattleUI(dic)
 
     def init_battle(self):
         self.roll_inisiative()
+        self.get_ui()
 
     def load_init_data(self):
         for npc in self.npc_group:
@@ -53,8 +71,7 @@ class Battle():
         dic = {}
         for char in arr:
             dic[char] = randrange(1,21)
-        asc = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1])}
-        print(asc)
+        self.turn_order = [k for k, v in sorted(dic.items(), key=lambda item: item[1])]
 
     def get_tile_availability(self):
         self.available_tiles = []
@@ -90,6 +107,8 @@ class Battle():
         if pos[0] == float(self.player.moving_to[0]) and pos[1] == float(self.player.moving_to[1]):
             self.player.reset_movement()
             self.player_moves_amount -= 1
+            self.player.steps_amount -= 1
+            self.get_ui()
             self.walking_animation = False
             self.get_tile_availability()
             self.map.update_grid(self.available_tiles, self.unavailable_tiles)
@@ -125,6 +144,8 @@ class Battle():
                 self.handle_action()
         elif key == pygame.K_p:
             self.game_pause = True
+        elif key == pygame.K_q:
+            self.end_turn()
         elif key == pygame.K_RIGHT or key == pygame.K_LEFT or key == pygame.K_UP or key == pygame.K_DOWN:
             self.handle_movement(key, is_down)
 
@@ -158,19 +179,36 @@ class Battle():
     def handle_action(self):
         pass
 
-    def melee_attack(self):
-        pass
+    def melee_attack(self, id):
+        self.current_active_character_id # person attacking
+        for npc in self.npc_group:
+            if npc.id == id:
+                npc.take_damage(1, 'bludgeoning')
 
-    def handle_action_wheel(self, action):
-        if action == 'primary':
-            self.melee_attack()
+    def handle_action_wheel(self, action_obj):
+        if action_obj['val'] == 'primary':
+            self.melee_attack(action_obj['id'])
+            self.player.actions_amount -= 1
+            self.get_ui()
+            if self.player.actions_amount < 1 and self.player.bonus_action_amount < 1 and self.player.steps_amount < 1:
+                self.end_turn()
+
+    def end_turn(self):
+        for i, x in enumerate(self.turn_order):
+            if x == self.current_active_character_id:
+                if i == len(self.turn_order) - 1:
+                    self.current_active_character_id = self.turn_order[0]
+                else:
+                    self.current_active_character_id = self.turn_order[i + 1]
 
     def handle_click(self):
         pos = pygame.mouse.get_pos()
-        if self.action_wheel_target:
-            action = self.action_wheel.handle_click(pos)
-            if action:
-                self.handle_action_wheel(action)
+        if self.ui.end_turn_button_rect.collidepoint(pos):
+            self.end_turn()
+        elif self.action_wheel_target:
+            action_obj = self.action_wheel.handle_click(pos)
+            if action_obj['val']:
+                self.handle_action_wheel(action_obj)
             else:
                 self.action_wheel_target = None
         else:

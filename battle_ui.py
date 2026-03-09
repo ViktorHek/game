@@ -1,27 +1,51 @@
 import pygame
 
 from settings import Settings
+from font import PlainText
 
 class BattleUI():
-    def __init__(self, characters):
+    def __init__(self, characters, current_id='player'):
         self.characters = characters
         self.settings = Settings()
-        self.active_index = 0
+        self.current_character_id = current_id
+        self.get_current_index(current_id)
         self.cards = []
-        self.current_character_id = 'player'
         self.render_characters_display()
         self.render_current_character()
-        action = 1
-        bonus_action = 1
-        speed = 10
-        self.render_action_pannel(action, bonus_action, speed)
-        # self.action_pannel = pygame.Surface(())
+        self.render_action_pannel(self.characters[self.current_character_id])
+        self.render_end_turn_button()
+
+    def get_current_index(self, id):
+        index = 0
+        self.active_index = 0
+        for key, val in self.characters.items():
+            if key == id:
+                self.active_index = index
+                return
+            else:
+                index += 1
 
     def get_scaled_img(self, path, scale=2):
         img = pygame.image.load(path).convert_alpha()
         return pygame.transform.scale(img, (img.get_width() * scale, img.get_height() * scale))
 
-    def render_action_pannel(self, action, bonus, speed):
+    def render_end_turn_button(self):
+        img = self.get_scaled_img('assets/ui_sprites/Sprites/Content Appear Animation/Paper UI Pack/Folding & Cutout/4 Notification/2.png', 0.5)
+        holder = self.get_scaled_img('assets/ui_sprites/Sprites/Content/5 Holders/7.png', 1)
+        self.end_turn_button = pygame.Surface((img.get_width(), img.get_height()), pygame.SRCALPHA).convert_alpha()
+        self.end_turn_button_rect = self.end_turn_button.get_rect(centerx = self.settings.screen_width / 2, bottom = self.action_pannel_rect.top)
+        self.end_turn_button.blit(img, (0,0))
+        t = PlainText('End Turn ')
+        font = pygame.font.Font('freesansbold.ttf', 14)
+        q = font.render('Q', True, (0,0,0))
+        text_rect = t.text.get_rect(center = (self.end_turn_button_rect.width / 2, self.end_turn_button_rect.height / 1.6))
+        self.end_turn_button.blit(t.text, text_rect)
+        holder_rect = holder.get_rect(centery = text_rect.centery, left = text_rect.right)
+        self.end_turn_button.blit(holder, holder_rect)
+        self.end_turn_button.blit(q, q.get_rect(center = holder_rect.center))
+
+    def render_action_pannel(self, char):
+        action, bonus, speed = char.actions_amount, char.bonus_action_amount, char.steps_amount
         url = 'assets/ui_sprites/Sprites/Content/'
         start = self.get_scaled_img(url + '5 Holders/26.png')
         middle = self.get_scaled_img(url + '5 Holders/27.png')
@@ -64,8 +88,8 @@ class BattleUI():
     def render_characters_display(self):
         index = 0
         self.cards = []
-        for key in self.characters.keys():
-            self.cards.append(CharacterCard(key, index, index == self.active_index))
+        for key, val in self.characters.items():
+            self.cards.append(CharacterCard(key, index, (val.hp, val.max_hp), index == self.active_index))
             index += 1
         card_width = self.cards[0].rect.width
         self.characters_display = pygame.Surface((len(self.cards) * card_width, card_width), pygame.SRCALPHA).convert_alpha()
@@ -97,6 +121,7 @@ class BattleUI():
         screen.blit(self.characters_display, self.characters_display_rect)
         screen.blit(self.character_display, self.character_display_rect)
         screen.blit(self.action_pannel, self.action_pannel_rect)
+        screen.blit(self.end_turn_button, self.end_turn_button_rect)
 
     def handle_action(self):
         pass
@@ -105,9 +130,11 @@ class BattleUI():
         pass
 
 class CharacterCard:
-    def __init__(self, id, index, is_active=False):
+    def __init__(self, id, index, hp, is_active=False):
         images = ["Frame 19.png", "Frame 20.png", "Frame 21.png", "Frame 22.png", "Frame 23.png", "Frame 24.png", "Frame 25.png", "Frame 26.png"]
         self.id = id
+        self.max_hp = hp[1]
+        self.hp = hp[0]
         self.index = index
         self.is_active = is_active
         bg_img = pygame.image.load('assets/ui_sprites/Sprites/Content/5 Holders/20250420manaSoul9SlicesB-Sheet.png').convert_alpha()
@@ -124,6 +151,14 @@ class CharacterCard:
         self.portret = pygame.transform.scale(portret, (64,64))
         self.portret_rect = self.portret.get_rect(center = self.rect.center)
         self.image.blit(self.portret, self.portret_rect)
+        font = pygame.font.Font('freesansbold.ttf', 12)
+        hp_text = font.render(f"{self.hp}/{self.max_hp}", True, (255,255,255))
+        self.text_shadow = pygame.Surface((hp_text.get_width() + 2, hp_text.get_height() + 2)).convert()
+        self.text_shadow.fill((0,0,0))
+        self.text_shadow.set_alpha(100)
+        text_rect = self.text_shadow.get_rect(center = (self.rect.width / 2, self.rect.height - 8))
+        self.image.blit(self.text_shadow, text_rect)
+        self.image.blit(hp_text, hp_text.get_rect(center = text_rect.center))
 
     def change_state(self):
         if self.is_active:

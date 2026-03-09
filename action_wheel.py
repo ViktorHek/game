@@ -4,6 +4,7 @@ from font import PlainText
 class ActionWheel:
     def __init__(self):
         self.target_rect = pygame.Rect((0,0),(0,0))
+        self.current_id = ''
         self.options = ['melee', 'spell', 'move', 'items', 'bonus', 'dash', 'talk', 'other']
         self.actions_db = {
             'primary': {'slot': 1, 'icon': 1, 'pos': (28, -66)},
@@ -44,16 +45,17 @@ class ActionWheel:
 
     def change_target(self, character):
         self.target_rect = character.rect
+        self.current_id = character.id
         self.rect = self.image.get_rect(center = self.target_rect.center)
         self.load_images()
 
     def handle_click(self, pos=None):
         pos = pos if pos else pygame.mouse.get_pos()
-        val = None
+        val = {"id": self.current_id, "val": None}
         for a in self.actions:
-            val = a.check_click(pos)
-            if val:
-                self.action = val
+            val['val'] = a.check_click(pos)
+            if val['val']:
+                self.action = val['val']
         return val
 
     def blitme(self, screen):

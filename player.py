@@ -16,7 +16,9 @@ class Player(Character):
             'attack': self.load_animation('attack')
         }
         self.data = PlayerData()
+        self.max_hp = self.data.max_hp
         self.hp = self.data.max_hp
+        self.steps_amount = self.data.speed // 10
 
     def load_animation(self, type):
         arr = []

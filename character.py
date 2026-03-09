@@ -17,6 +17,9 @@ class Character():
         self.hp = 10
         self.dir = ''
         self.speed = 1
+        self.actions_amount = 1
+        self.bonus_action_amount = 0
+        self.steps_amount = 30 // 10 # change 30 to monster speed
         self.inventory = []
         self.collision = True
         self.coordinates = self.get_coordinates()
@@ -38,6 +41,9 @@ class Character():
         img = pygame.image.load(src).convert_alpha()
         img_scaled = pygame.transform.scale(img, (img.get_width() * scale, img.get_height() * scale))
         return img_scaled
+
+    def take_damage(self, damage=1, type='bludgeoning'):
+        self.hp -= damage
 
     def reset_movement(self):
         self.moving_right = False
