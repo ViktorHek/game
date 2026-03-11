@@ -55,14 +55,14 @@ class Map:
             val.append(tile)                
         return val
 
-    def get_tile_collision(self, id, x, y):
+    def get_tile_collision(self, pos):
         val = None
+        x, y = pos[0], pos[1]
         if all(x.id < 0 for x in self.get_tile_layers(x, y)):
             return 1
         for key, pos in self.mobile_collision_grid.items():
-            if key != id:
-                if pos[0] == x and pos[1] == y:
-                    return 1
+            if pos[0] == x and pos[1] == y:
+                return key
         for tile in self.collision_grid:
             if tile['x'] == x and tile['y'] == y:
                 return tile['type']
@@ -111,10 +111,7 @@ class Map:
         return not_colliding
 
     def x_y_w_h(self, x_pos, y_pos, count, type):
-        x = x_pos
-        y = y_pos
-        w = 1
-        h = 1
+        x, y, w, h = x_pos, y_pos, 1, 1
         if type == 1 or type == 10:
             w = 32
             h = 32

@@ -21,7 +21,7 @@ class Character():
         self.max_hp = 10
         self.hp = 10
         self.dir = ''
-        self.speed = 1
+        self.speed = 4
         self.max_actions_amount = 1
         self.max_bonus_action_amount = 0
         self.max_steps_amount = 30 // 10
