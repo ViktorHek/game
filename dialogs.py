@@ -7,7 +7,7 @@ dialogs = {
 class Dialog:
     def __init__(self, id):
         self.id = id
-        try:
+        if id in dialogs:
             self.text = dialogs[id]
-        except:
+        else:
             self.text = "don't talk to me"

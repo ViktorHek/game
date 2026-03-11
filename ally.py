@@ -13,6 +13,7 @@ class Ally(Character):
             'attack': self.load_animation('attack')
         }
         self.is_party_member = True
+        self.speed = 4
 
     def load_animation(self, type):
         arr = []

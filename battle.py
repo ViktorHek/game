@@ -34,6 +34,11 @@ class Battle():
         self.action_wheel = ActionWheel()
         self.init_battle() # call from parent instead
 
+    def init_battle(self):
+        self.roll_inisiative()
+        self.get_ui()
+        self.map.load_grid_data(self.battle_object, self.current_id)
+
     def update(self):
         if self.walking_animation:
             self.check_walking_animation()
@@ -58,20 +63,12 @@ class Battle():
             self.handle_key(event.key, False)
 
     def handle_key(self, key, is_down):
-        if key == pygame.K_SPACE:
-            if is_down:
-                self.handle_action()
-        elif key == pygame.K_p and is_down:
+        if key == pygame.K_p and is_down:
             self.game_pause = True
         elif key == pygame.K_q and is_down:
             self.end_turn()
         elif key == pygame.K_RIGHT or key == pygame.K_LEFT or key == pygame.K_UP or key == pygame.K_DOWN:
             self.handle_movement(key, is_down)
-
-    def init_battle(self):
-        self.roll_inisiative()
-        self.get_ui()
-        self.map.load_grid_data(self.battle_object, self.current_id)
 
     def roll_inisiative(self):
         for id in self.battle_object.keys():
@@ -110,6 +107,22 @@ class Battle():
             self.walking_animation = False
             self.map.load_grid_data(self.battle_object, self.current_id)
 
+    def handle_click(self):
+        pos = pygame.mouse.get_pos()
+        if self.ui.end_turn_button_rect.collidepoint(pos):
+            self.end_turn()
+        elif self.action_wheel_target:
+            action_obj = self.action_wheel.handle_click(pos)
+            if action_obj['val']:
+                self.handle_action_wheel(action_obj)
+            else:
+                self.action_wheel_target = None
+        else:
+            for key, val in self.battle_object.items():
+                if val.rect.collidepoint(pos) and key != self.current_id:
+                    self.action_wheel.change_target(val)
+                    self.action_wheel_target = key
+
     def handle_movement(self, key, is_down):
         c = self.battle_object[self.current_id]
         if is_down or c.steps_amount < 1:
@@ -125,15 +138,13 @@ class Battle():
             self.battle_object[self.current_id].moving_to = target_pos
             self.battle_object[self.current_id].handle_movement(key, True)
 
-    def handle_action(self):
-        pass
-
     def melee_attack(self, id):
         self.current_id # person attacking
-        for key, val in self.battle_object.items():
-            if key == id:
-                val.take_damage(1, 'bludgeoning')
-                print(f"{self.current_id} is attacking {key}")
+        if id in self.battle_object:
+            self.battle_object[id].take_damage(1, 'bludgeoning')
+            print(f"{self.current_id} is attacking {id}")
+        else:
+            print("somthing wrong in battle/melee_attack")
 
     def handle_action_wheel(self, action_obj):
         if action_obj['val'] == 'primary':
@@ -166,22 +177,6 @@ class Battle():
                 break
         self.map.load_grid_data(self.battle_object, self.current_id)
         self.get_ui()
-
-    def handle_click(self):
-        pos = pygame.mouse.get_pos()
-        if self.ui.end_turn_button_rect.collidepoint(pos):
-            self.end_turn()
-        elif self.action_wheel_target:
-            action_obj = self.action_wheel.handle_click(pos)
-            if action_obj['val']:
-                self.handle_action_wheel(action_obj)
-            else:
-                self.action_wheel_target = None
-        else:
-            for key, val in self.battle_object.items():
-                if val.rect.collidepoint(pos) and key != self.current_id:
-                    self.action_wheel.change_target(val)
-                    self.action_wheel_target = key
 
     def blitme(self, screen):
         c = self.battle_object[self.current_id]
