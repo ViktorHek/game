@@ -6,6 +6,7 @@ from settings import Settings
 from map import Map
 from npc import Npc
 from dialogs import Dialog
+from dialogs_text import dialog_text
 
 class OverWorld():
     def __init__(self):
@@ -14,11 +15,12 @@ class OverWorld():
         self.settings = Settings()
         self.map = Map("map_1")
         self.player = Player()
-        self.npc_1 = Npc('jon', (0, 14), movement_pattern='random')
+        self.npc_1 = Npc('jon', (5, 14), movement_pattern='random')
         self.npc_2 = Npc('bob', (11, 12), movement_pattern=['right', 'down', 'up', 'left'])
         self.npc_3 = Npc('mike', (11, 8))
         self.npc_group = [self.npc_1, self.npc_2, self.npc_3]
         # self.npc_group = []
+        self.dialog = None
 
     def update(self):
         self.map.mobile_collision_grid = {}
@@ -38,6 +40,8 @@ class OverWorld():
         for npc in self.npc_group:
             npc.blitme(screen)
         self.player.blitme(screen)
+        if self.dialog:
+            self.dialog.blitme(screen)
         # self.map.blit_overlay(self.player.rect, screen)
 
     def handle_event(self, event):
@@ -53,6 +57,12 @@ class OverWorld():
             self.handle_key(event.key, False)
 
     def handle_key(self, key, is_down):
+        if self.dialog:
+            if is_down:
+                self.dialog.next()
+                if self.dialog.done:
+                    self.dialog = None
+            return
         if key == pygame.K_SPACE:
             if is_down:
                 self.handle_action()
@@ -82,8 +92,13 @@ class OverWorld():
         if npc == 'mike':
             self.start_battle = True
         else:
-            text = Dialog(npc)
-            print(text.text)
+            if npc in dialog_text:
+                self.dialog = Dialog(dialog_text[npc])
+            else:
+                self.dialog = Dialog(dialog_text['else'])
 
     def handle_click(self):
-        pass
+        if self.dialog:
+            self.dialog.next()
+            if self.dialog.done:
+                self.dialog = None

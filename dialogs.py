@@ -1,13 +1,35 @@
-dialogs = {
-    "jon": "hej",
-    "bob": "tjo",
-    "jim": "Def"
-}
+import pygame
+from settings import Settings
+from font import LongText
 
 class Dialog:
-    def __init__(self, id):
-        self.id = id
-        if id in dialogs:
-            self.text = dialogs[id]
+    def __init__(self, text):
+        self.settings = Settings()
+        self.done = False
+        self.text = text
+        self.counter = 0
+        self.get_image(self.text, self.counter)
+
+    def get_image(self, text, counter):
+        self.image = pygame.Surface((461, 150), pygame.SRCALPHA).convert_alpha()
+        self.rect = self.image.get_rect(centerx = self.settings.screen_width / 2, bottom = self.settings.screen_height)
+        self.text_box = pygame.Rect((self.rect.x + 32, self.rect.y + 40),(self.rect.width - 32*2, self.rect.height - 40*2))
+        url = 'assets/ui_sprites/Sprites/Content Appear Animation/Paper UI Pack/Folding & Cutout/7 Dialogue Box/'
+        src = '2_small.png' if counter == len(text) - 1 else '1_small.png'
+        text = LongText(text[self.counter], self.text_box, has_underline=False)
+        img = pygame.image.load(url + src).convert_alpha()
+        self.image.blit(img, (0,0))
+        self.image.blit(text.image, (42, 42))
+
+    def update(self):
+        pass
+
+    def next(self):
+        self.counter += 1
+        if self.counter == len(self.text):
+            self.done = True
         else:
-            self.text = "don't talk to me"
+            self.get_image(self.text, self.counter)
+
+    def blitme(self, screen):
+        screen.blit(self.image, self.rect)

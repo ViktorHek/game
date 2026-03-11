@@ -10,6 +10,7 @@ from battle_map import BattleMap
 from action_wheel import ActionWheel
 from battle_ui import BattleUI
 from utils import get_adjasent_cord, get_key_text
+from dialogs import Dialog
 
 class Battle():
     def __init__(self):
@@ -33,6 +34,7 @@ class Battle():
         self.action_wheel_target = None
         self.action_wheel = ActionWheel()
         self.init_battle() # call from parent instead
+        self.dialog = None
 
     def init_battle(self):
         self.roll_inisiative()
@@ -63,6 +65,12 @@ class Battle():
             self.handle_key(event.key, False)
 
     def handle_key(self, key, is_down):
+        if self.dialog:
+            if is_down:
+                self.dialog.next()
+                if self.dialog.done:
+                    self.dialog = None
+            return
         if key == pygame.K_p and is_down:
             self.game_pause = True
         elif key == pygame.K_q and is_down:
@@ -109,6 +117,11 @@ class Battle():
 
     def handle_click(self):
         pos = pygame.mouse.get_pos()
+        if self.dialog:
+            self.dialog.next()
+            if self.dialog.done:
+                self.dialog = None
+            return
         if self.ui.end_turn_button_rect.collidepoint(pos):
             self.end_turn()
         elif self.action_wheel_target:
@@ -142,7 +155,8 @@ class Battle():
         self.current_id # person attacking
         if id in self.battle_object:
             self.battle_object[id].take_damage(1, 'bludgeoning')
-            print(f"{self.current_id} is attacking {id}")
+            self.dialog = Dialog([f"{self.current_id} is attacking {id}"])
+            # print(f"{self.current_id} is attacking {id}")
         else:
             print("somthing wrong in battle/melee_attack")
 
@@ -170,11 +184,8 @@ class Battle():
     def end_turn(self):
         print(f"{self.current_id} ending turn")
         self.battle_object[self.current_id].reset_battle_stats()
-        for i, x in enumerate(self.turn_order):
-            if x == self.current_id:
-                index = 0 if i == len(self.turn_order) - 1 else i + 1
-                self.current_id = self.turn_order[index]
-                break
+        index = self.turn_order.index(self.current_id)
+        self.current_id = self.turn_order[0 if index == len(self.turn_order) - 1 else index + 1]
         self.map.load_grid_data(self.battle_object, self.current_id)
         self.get_ui()
 
@@ -191,3 +202,5 @@ class Battle():
             pygame.draw.circle(screen, (0,0,255), c.rect.center, circle_radius, width=2)
         if self.action_wheel_target:
             self.action_wheel.blitme(screen)
+        if self.dialog:
+            self.dialog.blitme(screen)
