@@ -6,14 +6,15 @@ from start_screen import StartScreen
 from character_creation import CharacterCreation
 from battle import Battle
 from over_world import OverWorld
+from fade_animation import FadeAnimation
 
 class Main():
     def __init__(self):
         pygame.init()
         self.running = True
-        self.game_pause = True
+        self.game_pause = False
         self.character_creation_active = False
-        self.battle_active = False
+        self.battle_active = True
         self.settings = Settings()
         sw, sh = self.settings.screen_width, self.settings.screen_height
         self.clock = pygame.time.Clock()
@@ -24,20 +25,25 @@ class Main():
         self.character_creation = CharacterCreation(self)
         self.battle = Battle()
         self.over_world = OverWorld()
+        self.transition_to = ''
+        self.fade = FadeAnimation()
 
     def run(self):
         while self.running:
-            self.check_event()
-            if self.game_pause:
-                if self.character_creation_active:
-                    self.character_creation.update()
-                else:
-                    self.start_screen.update()
+            if self.fade.animation_active:
+                self.check_animation()
             else:
-                if self.battle_active:
-                    self.battle.update()
+                self.check_event()
+                if self.game_pause:
+                    if self.character_creation_active:
+                        self.character_creation.update()
+                    else:
+                        self.start_screen.update()
                 else:
-                    self.over_world.update()
+                    if self.battle_active:
+                        self.battle.update()
+                    else:
+                        self.over_world.update()
             self.update_screen()
             self.clock.tick(60)
 
@@ -53,7 +59,23 @@ class Main():
                 self.battle.blitme(self.screen)
             else:
                 self.over_world.blitme(self.screen)
+        if self.fade.animation_active:
+            self.fade.blitme(self.screen)
         pygame.display.flip()
+
+    def check_animation(self):
+        if self.fade.animation_done:
+            if self.transition_to == 'battle':
+                self.battle_active = True
+                self.battle.init_battle()
+            self.fade.reset()
+            if self.fade.fade_in:
+                self.fade.animation_active = True
+                self.fade.fade_in = False
+
+    def start_transition(self, to):
+        self.transition_to = to
+        self.fade.animation_active = True
 
     def check_event(self):
         for event in pygame.event.get():
@@ -75,9 +97,11 @@ class Main():
                 else:
                     self.over_world.handle_event(event)
                     if self.over_world.start_battle:
-                        self.battle_active = True
+                        print(self.over_world.start_battle)
+                        self.start_transition('battle')
                         self.over_world.start_battle = False
-                        self.battle.init_battle()
+                        # self.battle_active = True
+                        # self.battle.init_battle()
 
 
 if __name__ == '__main__':

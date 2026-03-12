@@ -5,8 +5,8 @@ from player import Player
 from settings import Settings
 from map import Map
 from npc import Npc
-from dialogs import Dialog
-from dialogs_text import dialog_text
+from dialogs import Dialog, dialog_texts
+from fade_animation import FadeAnimation
 
 class OverWorld():
     def __init__(self):
@@ -21,8 +21,11 @@ class OverWorld():
         self.npc_group = [self.npc_1, self.npc_2, self.npc_3]
         # self.npc_group = []
         self.dialog = None
+        # self.fade = FadeAnimation()
+        # self.transition_to = ''
 
     def update(self):
+        # self.check_animation()
         self.map.mobile_collision_grid = {}
         self.map.mobile_collision_grid[self.player.id] = self.player.get_coordinates()
         for npc in self.npc_group:
@@ -35,6 +38,13 @@ class OverWorld():
             npc.check_movement(posible_npc_moves)
             npc.update(posible_npc_moves)
 
+    # def check_animation(self):
+    #     if self.fade.animation_active:
+    #         if self.fade.animation_done:
+    #             if self.transition_to == 'battle':
+    #                 self.fade.reset()
+    #                 self.start_battle = True
+
     def blitme(self, screen):
         self.map.blit_all_tiles(screen)
         for npc in self.npc_group:
@@ -42,6 +52,8 @@ class OverWorld():
         self.player.blitme(screen)
         if self.dialog:
             self.dialog.blitme(screen)
+        # if self.fade.animation_active:
+        #     self.fade.blitme(screen)
         # self.map.blit_overlay(self.player.rect, screen)
 
     def handle_event(self, event):
@@ -91,11 +103,13 @@ class OverWorld():
             return
         if npc == 'mike':
             self.start_battle = True
+            # self.transition_to = 'battle'
+            # self.fade.animation_active = True
         else:
-            if npc in dialog_text:
-                self.dialog = Dialog(dialog_text[npc])
+            if npc in dialog_texts:
+                self.dialog = Dialog(dialog_texts[npc])
             else:
-                self.dialog = Dialog(dialog_text['else'])
+                self.dialog = Dialog(dialog_texts['else'])
 
     def handle_click(self):
         if self.dialog:

@@ -11,6 +11,7 @@ from action_wheel import ActionWheel
 from battle_ui import BattleUI
 from utils import get_adjasent_cord, get_key_text
 from dialogs import Dialog
+from info_display import MiraclesInfoDisplay
 
 class Battle():
     def __init__(self):
@@ -35,6 +36,7 @@ class Battle():
         self.action_wheel = ActionWheel()
         self.init_battle() # call from parent instead
         self.dialog = None
+        self.info = MiraclesInfoDisplay(self.player.data.miracles)
 
     def init_battle(self):
         self.roll_inisiative()
@@ -51,6 +53,7 @@ class Battle():
         # self.battle_object[self.current_id].update()
         if self.action_wheel_target:
             self.action_wheel.update()
+        self.info.update()
 
     def handle_event(self, event):
         if event.type == pygame.QUIT:
@@ -122,6 +125,7 @@ class Battle():
             if self.dialog.done:
                 self.dialog = None
             return
+        self.info.check_click()
         if self.ui.end_turn_button_rect.collidepoint(pos):
             self.end_turn()
         elif self.action_wheel_target:
@@ -172,6 +176,9 @@ class Battle():
                 self.get_ui()
             else:
                 print("you are to far away")
+        elif action_obj['val'] == 'spell':
+            self.info.active = True
+
 
     def get_adjesent_target(self, target_id):
         pos = self.battle_object[self.current_id].get_coordinates()
@@ -202,5 +209,6 @@ class Battle():
             pygame.draw.circle(screen, (0,0,255), c.rect.center, circle_radius, width=2)
         if self.action_wheel_target:
             self.action_wheel.blitme(screen)
+        self.info.blitme(screen)
         if self.dialog:
             self.dialog.blitme(screen)

@@ -63,6 +63,58 @@ class Button(Sprite):
             self.is_selected = False
             return False
 
+class TextButton:
+    def __init__(self, text, parent, value=None):
+        self.value = value if value else text
+        self.parent = parent
+        self.text = PlainText(text)
+        self.is_hover = False
+        self.rect = self.text.text.get_rect(x = parent.x, y = parent.y)
+        self.block = pygame.Surface((self.rect.width, 1)).convert_alpha()
+        self.underline = pygame.Surface((self.rect.width, 1), pygame.SRCALPHA).convert_alpha()
+        self.block.fill(self.text.text_color)
+        self.underline_rect = self.underline.get_rect(x = self.rect.x, bottom = self.rect.bottom - 2)
+        self.counter = 0
+        self.fade_in = True
+
+    def update(self):
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            self.is_hover = True
+        else:
+            self.counter = 0
+            # self.fade_in = False
+            # if self.is_hover:
+            #     self.animation_fade_out()
+            self.is_hover = False
+            self.underline = pygame.Surface((self.rect.width, 1), pygame.SRCALPHA).convert_alpha()
+
+    def check_click(self, pos=None):
+        pos = pos if pos else pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            return self.value
+        else:
+            return False
+
+    def animation_fade_in(self):
+        self.underline.blit(self.block, (-(self.rect.width - self.counter), 0))
+        self.counter += 2
+
+    # def animation_fade_out(self):
+    #     print(f'count: {self.counter}, w: {self.rect.width}')
+    #     self.underline = pygame.Surface((self.rect.width, 1), pygame.SRCALPHA).convert_alpha()
+    #     self.underline.blit(self.block, (0 - self.counter, 0))
+    #     self.counter += 2
+    #     if self.counter >= self.rect.width:
+    #         self.is_hover = False
+    #         self.fade_in = True
+
+    def blitme(self, screen):
+        screen.blit(self.text.text, self.rect)
+        if self.is_hover:
+            self.animation_fade_in()
+            screen.blit(self.underline, self.underline_rect)
+
 # List =  {"id": any, "text": string, "value": any}
 class CheckBoxList():
     def __init__(self, game, parent, list, slim=False, multi=False, pre_selected=[], amount=0, disabled=[]):

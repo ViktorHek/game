@@ -21,6 +21,10 @@ class FadeAnimation():
         self.animation_done = False
         self.fade_in = True
 
+    def reset(self):
+        self.animation_active = False
+        self.animation_done = False
+
     def type_1(self):
         self.image.blit(self.box_black, (self.x, self.y))
         self.image.blit(self.box_shade, (self.x + self.space, self.y))
@@ -34,8 +38,9 @@ class FadeAnimation():
             self.y = 0
 
     def fade_out(self):
+        delay = 6
         current_alpha = self.image.get_alpha()
-        alpha = current_alpha - 10 if current_alpha - 10 > 0 else 0
+        alpha = current_alpha - delay if current_alpha - delay > 0 else 0
         self.image.set_alpha(alpha)
         if alpha == 0:
             self.animation_done = True
@@ -46,8 +51,11 @@ class FadeAnimation():
     def blitme(self, screen):
         if self.animation_active:
             if self.animation_done == False:
-                if self.type == 1:
-                    self.type_1()
-                elif self.type == 2:
-                    self.type_2()
+                if self.fade_in:
+                    if self.type == 1:
+                        self.type_1()
+                    elif self.type == 2:
+                        self.type_2()
+                else:
+                    self.fade_out()
             screen.blit(self.image, (0, 0))
