@@ -64,11 +64,13 @@ class Button(Sprite):
             return False
 
 class TextButton:
-    def __init__(self, text, parent, value=None, tooltip=None, border=True):
+    def __init__(self, text, parent, value=None, tooltip=None, right_icon=None, border=True):
         self.value = value if value else text
         self.parent = parent
         self.has_border = border
         self.is_hover = False
+        self.right_icon = right_icon
+        self.right_icon_rect = pygame.Rect((self.parent.right - 16, self.parent.bottom - 16), (16,16))
         self.tooltip = tooltip
         self.animation_active = False
         self.text = PlainText(text)
@@ -116,6 +118,8 @@ class TextButton:
         screen.blit(self.surf, self.rect)
         if self.is_hover or self.animation_active:
             pygame.draw.rect(screen, self.text.text_color, self.underline)
+        if self.right_icon:
+            pygame.draw.rect(screen, self.text.text_color, self.right_icon_rect)
 
 # List =  {"id": any, "text": string, "value": any}
 class CheckBoxList():

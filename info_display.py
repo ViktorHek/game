@@ -14,7 +14,7 @@ class MiraclesInfoDisplay:
         rect_right = self.settings.screen_width if self.right_side else self.sprite.get_width()
         self.rect = self.image.get_rect(centery = self.settings.screen_height / 2, right = rect_right)
         self.image.blit(self.sprite, (0,0))
-        self.container = pygame.Rect((50, 64), (124, 122))
+        self.container = pygame.Rect((50, 64), (256, 20))
         self.active = True
         self.is_big = True
         self.miracles = {
@@ -56,7 +56,7 @@ class MiraclesInfoDisplay:
         arr = []
         i = 0
         for key, val in self.miracles[self.level].items():
-            arr.append(TextButton(key, container.move(0, 24 + 18 * i), value=val, tooltip=MiracleTooltip(val), border=False))
+            arr.append(TextButton(key, container.move(0, 24 + 18 * i), value=val, tooltip=MiracleTooltip(val), right_icon=True, border=False))
             i += 1
         return arr
 
@@ -115,7 +115,6 @@ class MiraclesInfoDisplay:
                 l_btn.blitme(screen)
             for m_btn in self.miracle_buttons:
                 m_btn.blitme(screen)
-            self.miracle_buttons[0].is_hover = True
             for b2 in self.miracle_buttons:
                 if b2.is_hover and b2.tooltip:
                     p = pygame.mouse.get_pos() 
@@ -128,6 +127,10 @@ class MiracleTooltip:
         self.set_value(value)
         img = pygame.image.load('assets/ui_sprites/Sprites/Content Appear Animation/Paper UI Pack/Plain/5 Mini Map/1.png').convert_alpha()
         self.surf = pygame.Surface((img.get_width(), img.get_height()), pygame.SRCALPHA).convert_alpha()
+        self.shadow = pygame.Surface((img.get_width(), img.get_height()), pygame.SRCALPHA).convert_alpha()
+        self.shadow.fill((0,0,0))
+        self.shadow.set_alpha(10)
+        self.surf.blit(self.shadow, (0,0))
         self.surf.blit(img, (0,0))
         self.blueprint = [
             {'text': f"{self.damage_level['1']}d{self.damage_die}", 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_dice.png').convert_alpha()},
