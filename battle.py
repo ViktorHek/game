@@ -37,6 +37,7 @@ class Battle():
         self.init_battle() # call from parent instead
         self.dialog = None
         self.info = MiraclesInfoDisplay(self.player.data.miracles)
+        self.set_circle(self.battle_object[self.current_id].steps_amount, self.battle_object[self.current_id].rect)
 
     def init_battle(self):
         self.roll_inisiative()
@@ -116,6 +117,7 @@ class Battle():
         if x and y:
             self.battle_object[self.current_id].reset_movement()
             self.battle_object[self.current_id].steps_amount -= 1
+            self.set_circle(c.steps_amount, c.rect)
             self.get_ui()
             self.walking_animation = False
             self.map.load_grid_data(self.battle_object, self.current_id)
@@ -201,6 +203,13 @@ class Battle():
         self.current_id = self.turn_order[0 if index == len(self.turn_order) - 1 else index + 1]
         self.map.load_grid_data(self.battle_object, self.current_id)
         self.get_ui()
+        self.set_circle(self.battle_object[self.current_id].steps_amount, self.battle_object[self.current_id].rect)
+    
+    def set_circle(self, steps, rect):
+        radius = steps * self.settings.tile_size + rect.width // 2
+        self.step_range_circle = pygame.Surface((self.settings.screen_width, self.settings.screen_height), pygame.SRCALPHA).convert_alpha()
+        pygame.draw.circle(self.step_range_circle, (0,0,255), rect.center, radius, width=2)
+        self.step_range_circle.set_alpha(60)
 
     def blitme(self, screen):
         c = self.battle_object[self.current_id]
@@ -211,8 +220,10 @@ class Battle():
             self.map.blit_spacing_grid(screen)
         self.ui.blitme(screen)
         if c.is_party_member and c.steps_amount > 0:
-            circle_radius = c.steps_amount * self.settings.tile_size + c.rect.width // 2
-            pygame.draw.circle(screen, (0,0,255), c.rect.center, circle_radius, width=2)
+            # circle_radius = c.steps_amount * self.settings.tile_size + c.rect.width // 2
+            # bs = pygame.Surface((self.settings.screen_width, self.settings.screen_height), pygame.SRCALPHA).convert_alpha()
+            # pygame.draw.circle(bs, (0,0,255), c.rect.center, circle_radius, width=2)
+            screen.blit(self.step_range_circle, (0,0))
         if self.action_wheel_target:
             self.action_wheel.blitme(screen)
         self.info.blitme(screen)

@@ -80,6 +80,8 @@ class OverWorld():
                 self.handle_action()
         elif key == pygame.K_p:
             self.game_pause = True
+        elif key == pygame.K_a:
+            self.player.change_action('attack')
         else:
             self.player.handle_movement(key, is_down)
 

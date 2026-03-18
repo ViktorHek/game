@@ -97,6 +97,10 @@ class Character():
             self.rect.y += self.speed
         if self.moving_up and posible_moves['up']:
             self.rect.y -= self.speed
+        if self.moving_right or self.moving_left or self.moving_up or self.moving_down:
+            self.change_action('walk')
+        else:
+            self.change_action('idle')
         self.coordinates = self.get_coordinates()
 
     def handle_animation_counter(self):
@@ -105,6 +109,8 @@ class Character():
         if (self.counter + 1) // delay > len(self.frames[self.action]) - 1:
             self.counter = 0
             self.frame = 0
+            if self.action == 'attack':
+                self.action = 'idle'
             self.action = 'idle'
         else:
             self.counter += 1

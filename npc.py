@@ -18,7 +18,8 @@ class Npc(Character):
         self.movement_step_counter = 0
         self.frames = {
             'idle': self.load_animation('idle'),
-            'attack': self.load_animation('attack')
+            'attack': self.load_animation('attack'),
+            'walk': self.load_animation('walk')
         }
 
     def load_animation(self, type):
@@ -26,17 +27,20 @@ class Npc(Character):
         if self.type == 'goblin':
             types = {
                 'idle': 'assets/tileset/Characters/Goblin/PNG/spr_idle_strip9.png',
-                'attack': 'assets/tileset/Characters/Goblin/PNG/spr_attack_strip10.png'
+                'attack': 'assets/tileset/Characters/Goblin/PNG/spr_attack_strip10.png',
+                'walk': 'assets/tileset/Characters/Goblin/PNG/spr_walk_strip8.png'
             }
         elif self.type == 'human':
             types = {
                 'idle': 'assets/tileset/Characters/Human/IDLE/base_idle_strip9.png',
-                'attack': 'assets/tileset/Characters/Human/ATTACK/base_attack_strip10.png'
+                'attack': 'assets/tileset/Characters/Human/ATTACK/base_attack_strip10.png',
+                'walk': 'assets/tileset/Characters/Human/WALKING/base_walk_strip8.png'
             }
         else:
             types = {
                 'idle': 'assets/tileset/Characters/Skeleton/PNG/skeleton_idle_strip6.png',
-                'attack': 'assets/tileset/Characters/Skeleton/PNG/skeleton_attack_strip7.png'
+                'attack': 'assets/tileset/Characters/Skeleton/PNG/skeleton_attack_strip7.png',
+                'walk': 'assets/tileset/Characters/Skeleton/PNG/skeleton_walk_strip8.png'
             }
         distance_between_frames = 192
         frame_amount = self.get_img(types[type]).get_width() / distance_between_frames

@@ -13,7 +13,8 @@ class Player(Character):
         self.moving_to = [self.rect.x, self.rect.y]
         self.frames = {
             'idle': self.load_animation('idle'),
-            'attack': self.load_animation('attack')
+            'attack': self.load_animation('attack'),
+            'walk': self.load_animation('walk')
         }
         self.data = PlayerData()
         self.max_hp = self.data.max_hp
@@ -37,14 +38,21 @@ class Player(Character):
                 f'{url}ATTACK/base_attack_strip10.png', 
                 f'{url}ATTACK/{hair}_attack_strip10.png',
                 f'{url}ATTACK/tools_attack_strip10.png',
+            ],
+            'walk': [
+                f'{url}WALKING/base_walk_strip8.png', 
+                f'{url}WALKING/{hair}_walk_strip8.png',
+                f'{url}WALKING/tools_walk_strip8.png',
             ]
         }
         frame_amounts = {
             'idle': 9,
-            'attack': 10
+            'attack': 10,
+            'walk': 8
         }
         distance_between_frames = 192
-        for i in range(0, frame_amounts[type]):
+        frame_amount = self.get_img(types[type][0]).get_width() / distance_between_frames
+        for i in range(0, int(frame_amount)):
             s = pygame.Surface((160, 96), pygame.SRCALPHA).convert_alpha()
             x = (i * distance_between_frames + 16) * -1
             y = -16

@@ -10,7 +10,8 @@ class Ally(Character):
         self.rect.y = self.size * pos[1]
         self.frames = {
             'idle': self.load_animation('idle'),
-            'attack': self.load_animation('attack')
+            'attack': self.load_animation('attack'),
+            'walk': self.load_animation('walk')
         }
         self.is_party_member = True
         self.speed = 4
@@ -19,7 +20,8 @@ class Ally(Character):
         arr = []
         types = {
             'idle': 'assets/tileset/Characters/Human/IDLE/base_idle_strip9.png',
-            'attack': 'assets/tileset/Characters/Human/ATTACK/base_attack_strip10.png'
+            'attack': 'assets/tileset/Characters/Human/ATTACK/base_attack_strip10.png',
+            'walk': 'assets/tileset/Characters/Human/WALKING/base_walk_strip8.png',
         }
         distance_between_frames = 192
         frame_amount = self.get_img(types[type]).get_width() / distance_between_frames
