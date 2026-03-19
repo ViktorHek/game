@@ -81,8 +81,11 @@ class Character():
 
     def take_damage(self, damage=1, type='bludgeoning'):
         self.hp -= damage
-        if self.hp < 0:
+        if self.hp <= 0:
             self.hp = 0
+            self.change_action('death')
+            return 'death'
+        return None
 
     def reset_movement(self):
         self.moving_right = False

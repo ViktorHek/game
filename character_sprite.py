@@ -12,11 +12,13 @@ class CharacterSprite:
         self.frame = 0
         self.rect = pygame.Rect((pos[0], pos[1]), (self.size, self.size))
         self.action = 'idle'
+        self.single_animation = ['attack', 'hurt']
         self.is_flipped = False
 
     def get_frames(self, type):
         url = 'assets/tileset/Characters/'
         hair = 'bowlhair'
+        npc_hair = 'longhair'
         frames = {}
         mall = {
             'player': {
@@ -34,23 +36,33 @@ class CharacterSprite:
                     f'{url}Human/ATTACK/base_attack_strip10.png', 
                     f'{url}Human/ATTACK/{hair}_attack_strip10.png',
                     f'{url}Human/ATTACK/tools_attack_strip10.png',
+                ],
+                'death': [
+                    f'{url}Human/DEATH/base_death_strip13.png', 
+                    f'{url}Human/DEATH/{hair}_death_strip13.png',
+                    f'{url}Human/DEATH/tools_death_strip13.png',
                 ]
             },
             'human': {
                 'idle': [
                     f'{url}Human/IDLE/base_idle_strip9.png',
-                    #f'{url}Human/IDLE/spikeyhair_idle_strip9.png',
+                    #f'{url}Human/IDLE/{npc_hair}_idle_strip9.png',
                     f'{url}Human/IDLE/tools_idle_strip9.png'
                 ],
                 'walk': [
                     f'{url}Human/WALKING/base_walk_strip8.png', 
-                    #f'{url}Human/WALKING/spikeyhair_walk_strip8.png',
+                    #f'{url}Human/WALKING/{npc_hair}_walk_strip8.png',
                     f'{url}Human/WALKING/tools_walk_strip8.png',
                 ],
                 'attack': [
                     f'{url}Human/ATTACK/base_attack_strip10.png', 
-                    #f'{url}Human/ATTACK/spikeyhair_attack_strip10.png',
+                    #f'{url}Human/ATTACK/{npc_hair}_attack_strip10.png',
                     f'{url}Human/ATTACK/tools_attack_strip10.png',
+                ],
+                'death': [
+                    f'{url}Human/DEATH/base_death_strip13.png', 
+                    #f'{url}Human/DEATH/{npc_hair}_death_strip13.png',
+                    f'{url}Human/DEATH/tools_death_strip13.png',
                 ]
             },
             'goblin': {
@@ -62,6 +74,9 @@ class CharacterSprite:
                 ],
                 'attack': [
                     f'{url}Goblin/PNG/spr_attack_strip10.png', 
+                ],
+                'death': [
+                    f'{url}Goblin/PNG/spr_death_strip13.png',
                 ]
             },
             'skeleton': {
@@ -73,6 +88,9 @@ class CharacterSprite:
                 ],
                 'attack': [
                     f'{url}Skeleton/PNG/skeleton_attack_strip7.png', 
+                ],
+                'death': [
+                    f'{url}Skeleton/PNG/skeleton_death_strip10.png',
                 ]
             }
         }
@@ -95,10 +113,11 @@ class CharacterSprite:
         delay = 3
         self.frame = self.counter // delay
         if (self.counter + 1) // delay > len(self.frames[self.action]) - 1:
-            self.counter = 0
-            self.frame = 0
-            if self.action == 'attack':
-                self.action = 'idle'
+            if self.action != 'death':
+                self.counter = 0
+                self.frame = 0
+                if self.action == 'attack':
+                    self.action = 'idle'
         else:
             self.counter += 1
 
