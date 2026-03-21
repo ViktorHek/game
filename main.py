@@ -12,9 +12,9 @@ class Main():
     def __init__(self):
         pygame.init()
         self.running = True
-        self.game_pause = False
+        self.game_pause = True
         self.character_creation_active = False
-        self.battle_active = True
+        self.battle_active = False
         self.settings = Settings()
         sw, sh = self.settings.screen_width, self.settings.screen_height
         self.clock = pygame.time.Clock()
@@ -97,11 +97,8 @@ class Main():
                 else:
                     self.over_world.handle_event(event)
                     if self.over_world.start_battle:
-                        print(self.over_world.start_battle)
                         self.start_transition('battle')
                         self.over_world.start_battle = False
-                        # self.battle_active = True
-                        # self.battle.init_battle()
 
 
 if __name__ == '__main__':

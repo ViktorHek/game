@@ -26,3 +26,13 @@ def get_key_text(key):
     else:
         print('key missing in utils/get_key_text')
     return text
+
+def get_shadow_surf(img, scale=1.1, offset=2):
+    w, h = img.get_width(), img.get_height()
+    shadow = pygame.Surface((w * scale, h * scale), pygame.SRCALPHA).convert_alpha()
+    while scale > 1:
+        scaled_img = pygame.transform.scale(img, (w * scale, h * scale))
+        shadow_mask = pygame.mask.from_surface(scaled_img).to_surface(setcolor=(0,0,0,3), unsetcolor=None)
+        shadow.blit(shadow_mask, shadow_mask.get_rect(center = (w / 2 + offset, h / 2 + offset)))
+        scale -= 0.01
+    return shadow

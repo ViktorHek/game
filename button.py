@@ -64,15 +64,33 @@ class Button(Sprite):
             return False
 
 class TextButton:
-    def __init__(self, text, parent, value=None):
+    def __init__(self, text, parent, value=None, tooltip=None, right_icon=None, border=True):
         self.value = value if value else text
         self.parent = parent
-        self.text = PlainText(text)
+        self.has_border = border
         self.is_hover = False
+        self.right_icon = right_icon
+        self.question_img = pygame.image.load('assets/ui_sprites/node_2D/icon_interrogation.png')
+        self.question_rect = self.question_img.get_rect(centery = parent.centery, right = parent.right)
+        # self.right_icon_rect = pygame.Rect((self.parent.right - 16, self.parent.bottom - 16), (16,16))
+        self.tooltip = tooltip
         self.animation_active = False
-        self.rect = self.text.text.get_rect(x = parent.x, y = parent.y)
-        self.animation_speed = 2
-        self.underline = pygame.Rect((self.rect.x, self.rect.bottom - 2), (0,1))
+        self.text = PlainText(text)
+        tr = self.text.text.get_rect()
+        self.surf = pygame.Surface((tr.width + 4, tr.height + 2), pygame.SRCALPHA).convert_alpha()
+        self.rect = self.surf.get_rect(x = parent.x, y = parent.y)
+        if border:
+            self.h = pygame.Surface((1, self.rect.height - 2)).convert()
+            self.v = pygame.Surface((self.rect.width - 2, 1)).convert()
+            self.h.fill(self.text.text_color)
+            self.v.fill(self.text.text_color)
+            self.surf.blit(self.v, (1,0))
+            self.surf.blit(self.v, (1, self.rect.height - 1))
+            self.surf.blit(self.h, (0, 1))
+            self.surf.blit(self.h, (self.rect.width - 1, 1))
+        self.surf.blit(self.text.text, self.text.text.get_rect(center = (self.rect.width/2, self.rect.height/2)))
+        self.animation_speed = 4
+        self.underline = pygame.Rect((self.rect.x, self.rect.bottom - 3), (0,1))
 
     def update(self):
         pos = pygame.mouse.get_pos()
@@ -83,12 +101,14 @@ class TextButton:
         pos = pos if pos else pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             return self.value
+        elif self.question_rect.collidepoint(pos):
+            print(f'question for {self.value['name']}')
         else:
             return False
 
     def animation(self, is_fade_in):
         operator = 1 if is_fade_in else -1
-        self.underline.width = self.underline.width + (self.animation_speed * operator)
+        self.underline.width += self.animation_speed * operator
         if self.underline.width >= self.rect.width:
             self.underline.width = self.rect.width
             self.animation_active = False
@@ -99,9 +119,11 @@ class TextButton:
             self.animation_active = True
 
     def blitme(self, screen):
-        screen.blit(self.text.text, self.rect)
+        screen.blit(self.surf, self.rect)
         if self.is_hover or self.animation_active:
             pygame.draw.rect(screen, self.text.text_color, self.underline)
+        if self.right_icon:
+            screen.blit(self.question_img, self.question_rect)
 
 # List =  {"id": any, "text": string, "value": any}
 class CheckBoxList():
