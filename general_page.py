@@ -7,7 +7,7 @@ from button import CheckBoxList
 
 class GeneralPage(Page):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__()
         margin = 8
         # Left side
         self.intro_text_container = self.left_page.copy()

@@ -18,7 +18,7 @@ class NoPage:
 
 class CharacterCreation(Page):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__()
         self.game = game
         self.name = "character_creation"
         self.religion_page = ReligionPage(self.game)

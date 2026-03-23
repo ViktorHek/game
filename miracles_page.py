@@ -9,7 +9,7 @@ from scroll_bar import ScrollBar
 
 class MiraclesPage(Page):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__()
         self.right_title = Title("Miracles", self.right_title_container)
         self.complete = False
         self.cantrip_url = "data/miracles/cantrips.json"

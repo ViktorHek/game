@@ -9,7 +9,7 @@ from button import CheckBoxList
 
 class AbilityPage(Page):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__()
         self.game = game
         self.player = self.get_player()
         self.left_title = Title("Proficiencies", self.left_title_container)

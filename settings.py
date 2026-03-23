@@ -5,8 +5,10 @@ class Settings():
         self.tile_size = 32
         self.x_tiles = 32
         self.y_tiles = 16
+        self.fps = 60
         self.screen_width = self.x_tiles * self.tile_size # 1024
         self.screen_height = self.y_tiles * self.tile_size # 512
+        self.center = (self.screen_width / 2, self.screen_height / 2)
         self.text_color = (13, 141, 103) # hex 0d8d67
         self.color_active = (110, 197, 49) # hex 6ec531
         self.color_red = (201, 37, 25) # hex C92519

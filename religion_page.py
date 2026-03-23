@@ -8,7 +8,7 @@ from scroll_bar import ScrollBar
 
 class ReligionPage(Page):
     def __init__(self, game):
-        super().__init__(game)
+        super().__init__()
         self.db_classes = self.get_db("data/classes.json")
         margin = 8
         self.init_class = self.db_classes["guru"]

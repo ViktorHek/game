@@ -2,17 +2,17 @@ import pygame
 import json
 
 from book import Book
+from settings import Settings
 
 class Page:
-    def __init__(self, game):
-        self.game = game
-        self.screen = game.screen
+    def __init__(self):
+        self.settings = Settings()
         self.player_url = "save/player.json"
         self.bg = pygame.image.load(
             'assets/ui_sprites/Sprites/Book Desk/3.png'
         ).convert_alpha()
-        self.bg_rect = self.bg.get_rect(center = game.screen_rect.center)
-        self.book = Book(game)
+        self.bg_rect = self.bg.get_rect(center = self.settings.center)
+        self.book = Book()
         self.right_page = pygame.Rect((532, 64),(291, 360))
         self.left_page = pygame.Rect((202, 64),(291, 360))
         self.right_title_container = self.right_page.copy()

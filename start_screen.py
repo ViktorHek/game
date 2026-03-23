@@ -11,7 +11,7 @@ class StartScreen:
         self.setting = Settings()
         self.name = 'start_screen'
         self.image = pygame.image.load('assets/ui_sprites/Sprites/Book Desk/3.png')
-        self.rect = self.image.get_rect(center = (self.setting.screen_width / 2, self.setting.screen_height / 2))
+        self.rect = self.image.get_rect(center = self.setting.center)
         self.buttons = self.generate_buttons()
         self.animation = Animation(
             AnimationIndex.header.value, pygame.Rect((self.rect.centerx, 100), (0,0))
