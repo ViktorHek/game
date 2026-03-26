@@ -12,6 +12,7 @@ class CharacterSprite:
         self.frame = 0
         self.rect = pygame.Rect((pos[0], pos[1]), (self.size, self.size))
         self.action = 'idle'
+        self.queue = []
         self.single_animation = ['attack', 'hurt']
         self.is_flipped = False
 
@@ -37,6 +38,11 @@ class CharacterSprite:
                     f'{url}Human/ATTACK/{hair}_attack_strip10.png',
                     f'{url}Human/ATTACK/tools_attack_strip10.png',
                 ],
+                'hurt': [
+                    f'{url}Human/HURT/base_hurt_strip8.png', 
+                    f'{url}Human/HURT/{hair}_hurt_strip8.png',
+                    f'{url}Human/HURT/tools_hurt_strip8.png',
+                ],
                 'death': [
                     f'{url}Human/DEATH/base_death_strip13.png', 
                     f'{url}Human/DEATH/{hair}_death_strip13.png',
@@ -46,22 +52,27 @@ class CharacterSprite:
             'human': {
                 'idle': [
                     f'{url}Human/IDLE/base_idle_strip9.png',
-                    #f'{url}Human/IDLE/{npc_hair}_idle_strip9.png',
+                    f'{url}Human/IDLE/{npc_hair}_idle_strip9.png',
                     f'{url}Human/IDLE/tools_idle_strip9.png'
                 ],
                 'walk': [
                     f'{url}Human/WALKING/base_walk_strip8.png', 
-                    #f'{url}Human/WALKING/{npc_hair}_walk_strip8.png',
+                    f'{url}Human/WALKING/{npc_hair}_walk_strip8.png',
                     f'{url}Human/WALKING/tools_walk_strip8.png',
                 ],
                 'attack': [
                     f'{url}Human/ATTACK/base_attack_strip10.png', 
-                    #f'{url}Human/ATTACK/{npc_hair}_attack_strip10.png',
+                    f'{url}Human/ATTACK/{npc_hair}_attack_strip10.png',
                     f'{url}Human/ATTACK/tools_attack_strip10.png',
+                ],
+                'hurt': [
+                    f'{url}Human/HURT/base_hurt_strip8.png', 
+                    f'{url}Human/HURT/{npc_hair}_hurt_strip8.png',
+                    f'{url}Human/HURT/tools_hurt_strip8.png',
                 ],
                 'death': [
                     f'{url}Human/DEATH/base_death_strip13.png', 
-                    #f'{url}Human/DEATH/{npc_hair}_death_strip13.png',
+                    f'{url}Human/DEATH/{npc_hair}_death_strip13.png',
                     f'{url}Human/DEATH/tools_death_strip13.png',
                 ]
             },
@@ -74,6 +85,9 @@ class CharacterSprite:
                 ],
                 'attack': [
                     f'{url}Goblin/PNG/spr_attack_strip10.png', 
+                ],
+                'hurt': [
+                    f'{url}Goblin/PNG/spr_hurt_strip8.png', 
                 ],
                 'death': [
                     f'{url}Goblin/PNG/spr_death_strip13.png',
@@ -88,6 +102,9 @@ class CharacterSprite:
                 ],
                 'attack': [
                     f'{url}Skeleton/PNG/skeleton_attack_strip7.png', 
+                ],
+                'hurt': [
+                    f'{url}Skeleton/PNG/skeleton_hurt_strip7.png', 
                 ],
                 'death': [
                     f'{url}Skeleton/PNG/skeleton_death_strip10.png',
@@ -113,11 +130,22 @@ class CharacterSprite:
         delay = 3
         self.frame = self.counter // delay
         if (self.counter + 1) // delay > len(self.frames[self.action]) - 1:
-            if self.action != 'death':
+            if len(self.queue):
+                if self.queue[0][:5] == "delay":
+                    if int(self.queue[0][6:]) == 0:
+                        del self.queue[0]
+                    else:
+                        val = int(self.queue[0][6:]) - 1
+                        self.queue[0] = f"delay {val}"
+                        print(self.queue[0])
+                
+            elif self.action != 'death':
                 self.counter = 0
                 self.frame = 0
-                if self.action == 'attack':
+                if self.action in self.single_animation:
                     self.action = 'idle'
+            else: 
+                print(self.counter)
         else:
             self.counter += 1
 

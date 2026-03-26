@@ -179,8 +179,10 @@ class Battle():
             else:
                 self.dialog = Dialog([f"{self.id} is attacking {id}"])
             weapon = self.obj[self.id].primary_weapon
-            damage = self.d20.roll(dice=weapon['dice'])
-            status = self.obj[id].take_damage(damage, weapon['damage_type'])
+            damage = 20
+            # damage = self.d20.roll(dice=weapon['dice'])
+            self.obj[self.id].change_action('attack')
+            status = self.obj[id].take_damage(damage, weapon['damage_type'], 18)
             if status:
                 print(status)
             self.action_wheel_target = None

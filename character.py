@@ -79,11 +79,15 @@ class Character():
         y = int((self.rect.y + (self.size / 2)) / self.size)
         return [x, y]
 
-    def take_damage(self, damage=1, type='bludgeoning'):
+    def take_damage(self, damage, type='bludgeoning', delay=0):
         self.hp -= damage
+        if delay > 0:
+            self.character_sprite.queue.append(f"delay {delay}")
+        self.character_sprite.queue.append("hurt")
+        # self.change_action('hurt')
         if self.hp <= 0:
             self.hp = 0
-            self.change_action('death')
+            self.character_sprite.queue.append('death')
             return 'death'
         return None
 
