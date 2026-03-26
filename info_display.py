@@ -38,7 +38,7 @@ class MiraclesInfoDisplay:
         self.title.rect.y = self.rect.y + 64
         self.level_buttons = self.get_lv_buttons(self.con)
         self.miracle_buttons = self.get_miracle_buttons(self.con)
-        self.tooltip = MiracleTooltip(self.miracles['cantrips']['holy tomfoolery'])
+        self.tooltip = MiracleTooltip(self.miracles['cantrips']['Holy Mockery'])
 
     def get_lv_buttons(self, container):
         labels = [
@@ -70,8 +70,8 @@ class MiraclesInfoDisplay:
     def get_miracles(self, miracles):
         with open("data/miracles/cantrips.json", "r") as c:
             cantrips = json.load(c)
-            for m in miracles['cantrips']:
-                self.miracles['cantrips'][cantrips[m]['name']] = cantrips[m]
+            for val in miracles['cantrips']:
+                self.miracles['cantrips'][cantrips[val]['name']] = cantrips[val]
         with open("data/miracles/lv1.json", "r") as m1:
             miracles1 = json.load(m1)
             for m1 in miracles['lv1']:
@@ -132,17 +132,16 @@ class MiracleTooltip:
         self.surf = pygame.Surface((img.get_width(), img.get_height()), pygame.SRCALPHA).convert_alpha()
         self.surf.blit(img, (0,0))
         blueprint = [
-            {'text': f"{self.damage_level['1']}d{self.damage_die}", 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_dice.png').convert_alpha()},
-            {'text': self.range, 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_target_2.png').convert_alpha()},
-            {'text': self.effect, 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_particle.png').convert_alpha()},
-            {'text': self.duration, 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_time.png').convert_alpha()},
+            {'text': f"{self.damage['level'][0]}d{self.damage['dice']}", 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_dice.png').convert_alpha()},
+            {'text': f"{self.range}", 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_target_2.png').convert_alpha()},
+            {'text': f"{self.effect[0]['type']}", 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_particle.png').convert_alpha()},
+            {'text': f"{self.duration}", 'img': pygame.image.load('assets/ui_sprites/node_2D/icon_time.png').convert_alpha()},
         ]
         self.render_img(blueprint)
         self.shadow = get_shadow_surf(img)
 
     def set_value(self, value):
         self.name = value['name']
-        self.index = value['index']
         self.desc = value['desc']
         self.range = value['range']
         self.is_ritual = value['ritual']
@@ -151,19 +150,9 @@ class MiracleTooltip:
         self.casting_time = value['casting_time']
         self.level = value['level']
         self.school = value['school']
-        # change this shit
-        try:
-            self.damage_type = value['damage']['damage_type']
-            self.damage_die = value['damage']['die']
-            self.damage_level = value['damage']['level']
-            self.dc = value['dc'] # 'dc': {'dc_type': 'dex', 'dc_success': 'none'
-            self.effect = value['effect'][0]['type']
-        except KeyError:
-            self.damage_type = 'None'
-            self.damage_die = '0'
-            self.damage_level = {"1": 0, "5": 0, "11": 0, "17": 0}
-            self.dc = 'None'
-            self.effect = 'None'
+        self.damage = value['damage']
+        self.dv = value['dc']
+        self.effect = value['effect']
 
     def render_img(self, blueprint):
         self.surf.blit(PlainText(self.name).text, (50, 52))

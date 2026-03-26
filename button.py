@@ -37,12 +37,8 @@ class Button(Sprite):
         else:
             screen.blit(self.surf, self.rect)
         # if self.has_tool_tip and self.rect.collidepoint(pygame.mouse.get_pos()):
-        #     self.tool_tip.update()
+        #     self.tool_tip.blitme(screen)
         
-    def blit_tool_tip(self, screen):
-        if self.has_tool_tip and self.rect.collidepoint(pygame.mouse.get_pos()):
-            self.tool_tip.blitme(screen)
-
     def update(self):
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):

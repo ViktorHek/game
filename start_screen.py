@@ -62,4 +62,4 @@ class StartScreen:
             btn.blitme(screen)
         for btn in self.buttons:
             if btn.has_tool_tip:
-                btn.blit_tool_tip(screen)
+                btn.tool_tip.blitme(screen)

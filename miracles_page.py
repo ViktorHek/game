@@ -128,8 +128,6 @@ class MiraclesPage(Page):
         super().blitme(screen)
         screen.blit(self.left_title.image, self.left_title.rect)
         screen.blit(self.right_title.image, self.right_title.rect)
-        screen.blit(self.right_title.image, self.right_title.rect)
-        screen.blit(self.left_title.image, self.left_title.rect)
         self.check_box_list.draw_list(screen)
         screen.blit(self.scroll_bar.image, self.scroll_bar.rect)
         screen.blit(self.range.image, self.range.rect)

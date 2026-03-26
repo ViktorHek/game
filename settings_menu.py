@@ -25,8 +25,9 @@ class SettingsMenu:
             pos = pygame.mouse.get_pos()
             if self.open:
                 if self.btn.rect.collidepoint(pos):
-                    self.game.__init__()
-                # self.open = False
+                    self.game.mode = 'start_screen'
+                # change this shit
+                self.open = False
             else:
                 self.open = self.holder_rect.collidepoint(pos)
 

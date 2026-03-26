@@ -41,7 +41,7 @@ sneak attack
 * fighter = prest
 * monk = monk
 * barbarian = martyr
-* bard = apostle
+* bard = gospel
 * druid = Guru
 * rogue = virgin
 * sorcerer = rabbi
@@ -50,44 +50,43 @@ sneak attack
 ## Spells/Miracles
 
 ### db template 
-  {
-    "higher_level": string,
-    "index": int,
-    "name": string,
-    "desc": string,
-    "range": string (should be int),
-    "components": [string],
-    "material":? string
-    "ritual": bool,
-    "duration": string (should be int),
-    "concentration": bool,
-    "casting_time": string,
-    "level": int,
-    "damage":? {
-      "damage_type": string,
-      "die": int,
-      "level": {
-        "1": int,
-        "5": int,
-        "11": int,
-        "17": int
+  "xxx" : {
+    "name": "",
+    "desc": "",
+    "range": 0,
+    "material": "",
+    "ritual": false,
+    "duration": "",
+    "concentration": false,
+    "casting_time": "",
+    "level": 0,
+    "damage": {
+      "damage_type": "",
+      "dice": 0,
+      "level": [1,2,3,4]
+    },
+    "dc": {
+      "dc_type": "",
+      "dc_success": {
+        "damage": [0, 0],
+        "effect": {
+          "type": "",
+          "target": "",
+          "duration": ""
+        }
       }
     },
-    "dc":? {
-      "dc_type": string,
-      "dc_success": string
+    "area_of_effect": {
+      "type": "",
+      "size": 0
     },
-    "area_of_effect":? {
-      "type": "cone",
-      "size": 15
-    },
-    "effect":? [
+    "effect": [
       {
-        "type": "disadvantage",
-        "target": "target",
-        "duration": "use"
+        "type": "",
+        "target": "",
+        "duration": ""
       }
     ],
-    "school": string,
-    "classes": [string]
-  }
+    "school": "",
+    "classes": [""]
+  },

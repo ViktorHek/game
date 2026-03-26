@@ -524,8 +524,8 @@
       }
     ]
   },
-  "apostle": {
-    "name": "apostle",
+  "gospel": {
+    "name": "gospel",
     "hit_die": 8,
     "proficiency_choices": {
       "choose": 3,

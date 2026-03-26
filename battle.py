@@ -22,31 +22,31 @@ class Battle():
         self.walking_animation = False
         self.allow_events = True
         self.turn_order = []
-        self.current_id = 'player'
+        self.id = 'player'
         self.settings = Settings()
         self.map = BattleMap()
         self.player = Player([5, 10])
-        self.battle_object = {
+        self.obj = {
             f"{self.player.id}": self.player, 
             "buddy": Ally(id='buddy', pos=(6, 11)),
             "jon": Npc('jon', (6, 3)), 
             "bob": Npc('bob', (24, 3), type='skeleton'), 
             "mike": Npc('mike', (5, 11)), 
         }
-        self.ui = BattleUI(self, self.battle_object)
-        self.map.load_grid_data(self.battle_object, self.current_id)
+        self.ui = BattleUI(self, self.obj)
+        self.map.load_grid_data(self.obj, self.id)
         self.action_wheel_target = None
         self.action_wheel = ActionWheel()
         self.init_battle() # call from parent instead
         self.dialog = None
         self.info = MiraclesInfoDisplay(self.player.data.miracles)
-        self.set_circle(self.battle_object[self.current_id].steps_amount, self.battle_object[self.current_id].rect)
+        self.set_circle(self.obj[self.id].steps_amount, self.obj[self.id].rect)
         self.d20 = D20(20)
 
     def init_battle(self):
         self.roll_inisiative()
         self.get_ui()
-        self.map.load_grid_data(self.battle_object, self.current_id)
+        self.map.load_grid_data(self.obj, self.id)
 
     def update(self):
         if self.info.active:
@@ -56,9 +56,9 @@ class Battle():
                 self.check_walking_animation()
             else:
                 self.handle_turn()
-            for char in self.battle_object.values():
+            for char in self.obj.values():
                 char.update()
-            # self.battle_object[self.current_id].update()
+            # self.obj[self.id].update()
             if self.action_wheel_target:
                 self.action_wheel.update()
 
@@ -89,43 +89,43 @@ class Battle():
             self.handle_movement(key, is_down)
 
     def roll_inisiative(self):
-        for id in self.battle_object.keys():
+        for id in self.obj.keys():
             self.turn_order.append(id)
         # dic = {}
-        # for id in self.battle_object.keys():
+        # for id in self.obj.keys():
         #     dic[id] = randrange(1,21)
         # self.turn_order = [k for k, v in sorted(dic.items(), key=lambda item: item[1])]
-        self.current_id = self.turn_order[0]
+        self.id = self.turn_order[0]
 
     def get_ui(self):
         dic = {}
         for id in self.turn_order:
-            dic[f"{id}"] = self.battle_object[f"{id}"]
-        self.ui.__init__(self, dic, self.current_id)
-        # self.ui = BattleUI(self, dic, self.current_id)
+            dic[f"{id}"] = self.obj[f"{id}"]
+        self.ui.__init__(self, dic, self.id)
+        # self.ui = BattleUI(self, dic, self.id)
 
     def handle_turn(self):
-        c = self.battle_object[self.current_id]
+        c = self.obj[self.id]
         if c.is_party_member:
             self.allow_events = True
         else:
             if c.steps_amount < 1:
                 self.end_turn()
             else:
-                self.battle_object[self.current_id].battle_ai()
+                self.obj[self.id].battle_ai()
                 self.walking_animation = True
 
     def check_walking_animation(self):
-        c = self.battle_object[self.current_id]
+        c = self.obj[self.id]
         x = c.rect.x / self.settings.tile_size == float(c.moving_to[0])
         y = c.rect.y / self.settings.tile_size == float(c.moving_to[1])
         if x and y:
-            self.battle_object[self.current_id].reset_movement()
-            self.battle_object[self.current_id].steps_amount -= 1
+            self.obj[self.id].reset_movement()
+            self.obj[self.id].steps_amount -= 1
             self.set_circle(c.steps_amount, c.rect)
             self.get_ui()
             self.walking_animation = False
-            self.map.load_grid_data(self.battle_object, self.current_id)
+            self.map.load_grid_data(self.obj, self.id)
 
     def handle_click(self):
         if self.d20.active:
@@ -150,13 +150,13 @@ class Battle():
             else:
                 self.action_wheel_target = None
         else:
-            for key, val in self.battle_object.items():
-                if val.rect.collidepoint(pos) and key != self.current_id:
+            for key, val in self.obj.items():
+                if val.rect.collidepoint(pos) and key != self.id:
                     self.action_wheel.change_target(val)
                     self.action_wheel_target = key
 
     def handle_movement(self, key, is_down):
-        c = self.battle_object[self.current_id]
+        c = self.obj[self.id]
         if is_down or c.steps_amount < 1:
             return
         pos = [c.rect.x // self.settings.tile_size, c.rect.y // self.settings.tile_size]
@@ -167,20 +167,20 @@ class Battle():
             is_moving = True
         if self.walking_animation == False and is_moving:
             self.walking_animation = True
-            self.battle_object[self.current_id].moving_to = target_pos
-            self.battle_object[self.current_id].handle_movement(key, True)
+            self.obj[self.id].moving_to = target_pos
+            self.obj[self.id].handle_movement(key, True)
 
     def melee_attack(self, id):
         dice = self.d20.roll(False)
         if True:
-        # if dice >= self.battle_object[id].ac or dice == 20:
+        # if dice >= self.obj[id].ac or dice == 20:
             if dice == 20:
                 self.dialog = Dialog(["Criticla hit!"])
             else:
-                self.dialog = Dialog([f"{self.current_id} is attacking {id}"])
-            weapon = self.battle_object[self.current_id].primary_weapon
+                self.dialog = Dialog([f"{self.id} is attacking {id}"])
+            weapon = self.obj[self.id].primary_weapon
             damage = self.d20.roll(dice=weapon['dice'])
-            status = self.battle_object[id].take_damage(damage, weapon['damage_type'])
+            status = self.obj[id].take_damage(damage, weapon['damage_type'])
             if status:
                 print(status)
             self.action_wheel_target = None
@@ -192,13 +192,13 @@ class Battle():
 
     def handle_action_wheel(self, action_obj):
         if action_obj['val'] == 'primary':
-            if self.battle_object[self.current_id].actions_amount < 1:
+            if self.obj[self.id].actions_amount < 1:
                 self.dialog = Dialog(['You have already used your action'])
                 return
             target = self.get_adjesent_target(action_obj['id'])
             if target == action_obj['id']:
                 self.melee_attack(action_obj['id'])
-                self.battle_object[self.current_id].actions_amount -= 1
+                self.obj[self.id].actions_amount -= 1
                 self.get_ui()
             else:
                 self.dialog = Dialog(['You are to far away'])
@@ -207,7 +207,7 @@ class Battle():
 
 
     def get_adjesent_target(self, target_id):
-        pos = self.battle_object[self.current_id].get_coordinates()
+        pos = self.obj[self.id].get_coordinates()
         for dir in get_adjasent_cord(pos).values():
             id = self.map.get_tile_collision(dir)
             if id == target_id:
@@ -215,13 +215,13 @@ class Battle():
         return False
 
     def end_turn(self):
-        print(f"{self.current_id} ending turn")
-        self.battle_object[self.current_id].reset_battle_stats()
-        index = self.turn_order.index(self.current_id)
-        self.current_id = self.turn_order[0 if index == len(self.turn_order) - 1 else index + 1]
-        self.map.load_grid_data(self.battle_object, self.current_id)
+        print(f"{self.id} ending turn")
+        self.obj[self.id].reset_battle_stats()
+        index = self.turn_order.index(self.id)
+        self.id = self.turn_order[0 if index == len(self.turn_order) - 1 else index + 1]
+        self.map.load_grid_data(self.obj, self.id)
         self.get_ui()
-        self.set_circle(self.battle_object[self.current_id].steps_amount, self.battle_object[self.current_id].rect)
+        self.set_circle(self.obj[self.id].steps_amount, self.obj[self.id].rect)
     
     def set_circle(self, steps, rect):
         radius = steps * self.settings.tile_size + rect.width // 2
@@ -230,9 +230,9 @@ class Battle():
         self.step_range_circle.set_alpha(60)
 
     def blitme(self, screen):
-        c = self.battle_object[self.current_id]
+        c = self.obj[self.id]
         self.map.blit_all_tiles(screen)
-        for char in self.battle_object.values():
+        for char in self.obj.values():
             char.blitme(screen)
         if c.is_party_member:
             self.map.blit_spacing_grid(screen)
