@@ -17,8 +17,9 @@ class RacePage(Page):
             (self.left_page.left + margin, self.left_title_container.bottom + margin),
             (self.left_page.width, 20)
         )
-        self.speed_container = self.size_container.copy()
-        self.speed_container.top = self.size_container.bottom
+        self.speed_container = self.size_container.move(0, self.size_container.height)
+        # self.speed_container = self.size_container.copy()
+        # self.speed_container.top = self.size_container.bottom
         self.get_abi()
         self.get_traits()
 
@@ -33,7 +34,6 @@ class RacePage(Page):
         self.check_box_container.height = self.right_page.height - self.right_title_container.height - self.text_box.rect.height
         self.race_list = self.get_race_list()
         self.check_box_list = CheckBoxList(
-            game,
             self.check_box_container,
             self.race_list
         )

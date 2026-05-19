@@ -129,8 +129,7 @@ class TextButton:
 
 # List =  {"id": any, "text": string, "value": any}
 class CheckBoxList:
-    def __init__(self, game, parent, list, slim=False, multi=False, pre_selected=[], amount=0, disabled=[]):
-        self.game = game
+    def __init__(self, parent, list, slim=False, multi=False, pre_selected=[], amount=0, disabled=[]):
         self.parent = parent
         self.multi = multi
         self.slim = slim
@@ -152,9 +151,9 @@ class CheckBoxList:
         for i, obj in enumerate(list):
             if self.slim:
                 is_disabled = True if obj["text"] in self.disabled else False
-                arr.append(CheckBoxSlim(self.game, obj["id"], obj["text"], box, obj["value"], pre_selected = self.pre_selected, is_disabled=is_disabled))
+                arr.append(CheckBoxSlim(obj["id"], obj["text"], box, obj["value"], pre_selected = self.pre_selected, is_disabled=is_disabled))
             else:
-                arr.append(CheckBox(self.game, obj["id"], obj["text"], box, obj["value"]))
+                arr.append(CheckBox(obj["id"], obj["text"], box, obj["value"]))
             if i % 2 == 0: #Even
                 op = 1 if box.x == base_x else -1
                 box.x += box.width * op
@@ -202,9 +201,9 @@ class CheckBoxList:
             button.blitme(screen)
         
 class CheckBox(BaseButton):
-    def __init__(self, game, id, text, parent, value=None, tool_tip="", is_disabled=False):
+    def __init__(self, id, text, parent, value=None, tool_tip="", is_disabled=False):
         super().__init__(id, text, parent, value, tool_tip=tool_tip)
-        self.height = game.settings.tile_size
+        self.height = Settings().tile_size
         url = "assets/ui_sprites/Sprites/Content/"
         arrow_img = pygame.image.load(url + "4 Buttons/Sliced/5.png").convert_alpha()
         self.arrow = pygame.transform.flip(arrow_img, True, False)
@@ -249,7 +248,7 @@ class CheckBox(BaseButton):
             screen.blit(self.arrow, self.arrow_rect)
 
 class CheckBoxSlim(BaseButton):
-    def __init__(self, game, id, text, parent, value=None, tool_tip="", pre_selected=[], is_disabled=False):
+    def __init__(self, id, text, parent, value=None, tool_tip="", pre_selected=[], is_disabled=False):
         super().__init__(id, text, parent, value, tool_tip=tool_tip)
         self.is_disabled = is_disabled
         self.is_checked = id in pre_selected

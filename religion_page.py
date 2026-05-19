@@ -32,7 +32,7 @@ class ReligionPage(Page):
             (r.x, r.y + th + 16), (r.width, r.height - th - self.text_box.rect.height)
         )
         self.class_list = self.get_class_list()
-        self.check_box_list = CheckBoxList(game, self.check_box_container, self.class_list)
+        self.check_box_list = CheckBoxList(self.check_box_container, self.class_list)
         self.scroll_bar_container = pygame.Rect(
             (self.right_page.right - 16, self.right_title_container.bottom), 
             (16, self.check_box_container.height)

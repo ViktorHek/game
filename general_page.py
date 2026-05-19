@@ -44,7 +44,7 @@ class GeneralPage(Page):
             {"id": "both", "text": "both", "value": "both"},
             {"id": "neither", "text": "neither", "value": "neither"},
         ]
-        self.gender_checkbox = CheckBoxList(game, self.gender_checkbox_container, gender_list)
+        self.gender_checkbox = CheckBoxList(self.gender_checkbox_container, gender_list)
         self.complete = False
 
     def check_click(self):

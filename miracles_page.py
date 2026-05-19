@@ -32,7 +32,6 @@ class MiraclesPage(Page):
         self.check_box_container.y += self.right_title.rect.height
         self.spell_list = self.get_spell_list()
         self.check_box_list = CheckBoxList(
-            game,
             self.check_box_container,
             self.spell_list
         )

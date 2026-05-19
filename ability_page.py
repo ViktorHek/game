@@ -16,11 +16,9 @@ class AbilityPage(Page):
         self.proficiencies_list = super().get_db("data/proficiencies.json")
         self.complete = False
         self.selected_proficiencies = []
-        self.proficiencies_list_container = self.left_page.copy()
-        self.proficiencies_list_container.top = self.left_title_container.bottom + 8
+        self.proficiencies_list_container = self.left_page.move(0, self.left_title_container.height + 8)
         self.proficiencies_max_amount = self.player["pa"]
         self.proficiencies = CheckBoxList(
-            game, 
             self.proficiencies_list_container, 
             self.get_p_list(),
             slim = True,
@@ -69,7 +67,6 @@ class AbilityPage(Page):
         self.proficiencies_max_amount = self.player["pa"]
         s = self.proficiencies.selected
         self.proficiencies = CheckBoxList(
-            self.game, 
             self.proficiencies_list_container, 
             self.get_p_list(),
             slim = True,
@@ -118,9 +115,8 @@ class AbilityPage(Page):
 
     def check_click(self):
         proficiencies_list = self.proficiencies.check_click()
-        if proficiencies_list:
-            self.selected_proficiencies = proficiencies_list
-            self.get_info_text(len(self.selected_proficiencies))
+        self.selected_proficiencies = proficiencies_list
+        self.get_info_text(len(self.selected_proficiencies))
         taken = set(a.value_index for a in self.abilities)
         for ability in self.abilities:
             operator = ability.handle_click()
