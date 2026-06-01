@@ -102,12 +102,13 @@ class Character():
             self.character_sprite.frame = 0
             self.character_sprite.action = action
 
-    def get_hitbox(self, padding=8):
-        r = pygame.Rect(
-            (self.rect.x + padding // 2, self.rect.y + padding // 2),
-            (self.rect.width - padding, self.rect.height - padding)
+    def get_hitbox(self, rect=None, padding=8):
+        r = rect if rect else self.rect
+        val = pygame.Rect(
+            (r.x + padding // 2, r.y + padding // 2),
+            (r.width - padding, r.height - padding)
         )
-        return r
+        return val
 
     # def update(self, posible_moves={'right': True, 'left': True, 'down': True, 'up': True}):
     all_moves = {'right': True, 'left': True, 'down': True, 'up': True}

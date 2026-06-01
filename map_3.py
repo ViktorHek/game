@@ -34,24 +34,19 @@ class Map3:
         self.tmxdata = load_pygame(src, pixelalpha=True)
         self.tiles, self.objects, self.colliders = self.get_tile_grid()
         self.add_world_border()
-        # self.get_object_grid()
+        for c in self.colliders:
+            print(c.polygon_type)
 
     def add_world_border(self):
-        w, h = self.tmxdata.width * size, self.tmxdata.height * size
+        w, h = (self.tmxdata.width * size) / 2, (self.tmxdata.height * size) / 2
         colliders = {
             "left_border": pygame.Rect((-10, -10), (10, h + 20)),
-            "right_border": pygame.Rect((w, -10), (10, h + 20)),
+            "right_border": pygame.Rect((w + 32, -10), (10, h + 20)),
             "up_border": pygame.Rect((-10, -10), (w + 20, 10)),
-            "down_border": pygame.Rect((-10, h), (w + 20, 10))
+            "down_border": pygame.Rect((-10, h - 64), (w + 40, 10))
         }
         for key, val in colliders.items():
             self.colliders.append(Collider(val, key))
-
-    # def get_tile(self, x, y, l):
-    #     val = NoTile()
-    #     if len(self.tiles[y][x]["layers"]) == l + 1:
-    #         val = self.tiles[y][x]["layers"][l]
-    #     return val
 
     def get_tile_layers(self, x, y):
         val = []
@@ -83,86 +78,15 @@ class Map3:
 
     def not_colliding(self, dir, character):
         not_colliding = True
-        for col in self.colliders:
-            if col.is_colliding(character.rect):
-                not_colliding = False
-            else:
-                not_colliding = True
-        return not_colliding
-        not_colliding = True
-        r = pygame.Rect(
-            (character.rect.x + 4, character.rect.y + 4), 
-            (character.rect.width - 8, character.rect.height - 8)
+        r = character.rect.move(
+            character.movement[dir][0] * character.speed,
+            character.movement[dir][1] * character.speed
         )
-        r.x += character.movement[dir][0] * character.speed
-        r.y += character.movement[dir][1] * character.speed
-        max_vertical = len(self.tiles[r.y // size]) < r.right / size
-        max_horisontal = len(self.tiles) < r.bottom / size
-        # screen border
-        if r.x < 0 or r.y < 0 or max_horisontal or max_vertical:
-            return False
-        # npc
-        for npc_id, npc in self.mobile_collision_grid.items():
-            if npc_id != character.id:
-                npc_rect = pygame.Rect(
-                    (npc[0] * size + 2, npc[1] * size + 2), 
-                    (size - 4, size - 4)
-                )
-                if r.colliderect(npc_rect):
-                    not_colliding = False
-        # tiles
-        for col_obj in self.collision_grid:
-            rect_arr = self.get_collision_box_arr(col_obj['x'] * size, col_obj['y'] * size, col_obj['type'])
-            for rect in rect_arr:
-                if r.colliderect(rect):
-                    if col_obj['type'] == 10:
-                        return True
-                    else:
-                        not_colliding = False
+        rect = character.get_hitbox(r)
+        for col in self.colliders:
+            if col.is_colliding(rect):
+                not_colliding = False
         return not_colliding
-
-    def x_y_w_h(self, x_pos, y_pos, count, type):
-        x, y, w, h = x_pos, y_pos, 1, 1
-        if type == 1 or type == 10:
-            w = 32
-            h = 32
-        elif type == 2:
-            x = x_pos + 31
-            h = 32
-        elif type == 3:
-            x = x_pos + 31 - count
-            y = y_pos + count
-            w = 1 + count
-        elif type == 4:
-            y = y_pos + 31
-            w = 32
-        elif type == 5:
-            y = y_pos + count
-            w = 1 + count
-        elif type == 6:
-            h = 32
-        elif type == 7:
-            y = y_pos + count
-            w = 32 - count
-        elif type == 8:
-            w = 32
-        elif type == 9:
-            x = x_pos + count
-            y = y_pos + count
-            w = 32 - count
-        return x, y, w, h
-
-    def get_collision_box_arr(self, x_pos, y_pos, type):
-        arr = []
-        count = 0
-        if type == 1 or type == 2 or type == 4 or type == 6 or type == 8 or type == 10:
-            count = 31
-        while count < 32:
-            x, y, w, h = self.x_y_w_h(x_pos, y_pos, count, type)
-            r = pygame.Rect((x, y), (w, h))
-            arr.append(r)
-            count += 1
-        return arr
 
     def blit_all_tiles(self, screen):
         for y in self.tiles:
@@ -174,10 +98,10 @@ class Map3:
         for obj in self.objects:
             img = pygame.transform.scale(obj.image, (size, size))
             screen.blit(img, (obj.x, obj.y))
-        for rr in self.colliders:
-            hh = pygame.Surface((rr.rect.width, rr.rect.height))
+        for col in self.colliders:
+            hh = pygame.Surface((col.rect.width, col.rect.height))
             hh.fill((200,0,0))
-            screen.blit(hh, (rr.rect.x, rr.rect.y))
+            screen.blit(hh, (col.rect.x, col.rect.y))
     
     def blit_overlay(self, player_rect, screen):
         x = int((player_rect.x + size / 2) // size)
@@ -229,7 +153,6 @@ class Map3:
             if isinstance(layer, pytmx.TiledTileLayer):
                 for tile in layer.tiles():
                     properties = self.try_get_prop(tile, layer_index)
-                    # properties["frame_images"] = self.get_animation_frames(properties["frames"])
                     properties["frame_images"] = [self.tmxdata.get_tile_image_by_gid(frame.gid) for frame in properties["frames"]]
                     tile_obj = Tile(tile, properties)
                     tiles[tile[1]][tile[0]]["layers"].append(tile_obj)
@@ -253,20 +176,6 @@ class Map3:
             for x in range(0, self.tmxdata.width):
                 tiles[y].append({"x": x * size, "y": y * size, "layers": []})
         return tiles
-
-    # def set_collision_grid(self, tile, properties):
-    #     for col in self.collision_grid:
-    #         if col['x'] == tile[0] and col['y'] == tile[1]:
-    #             self.collision_grid.remove(col)
-    #     collision_obj = {'x': tile[0], 'y': tile[1], 'type': properties['collision']}
-    #     self.collision_grid.append(collision_obj)
-
-    # def get_animation_frames(self, frames):
-    #     arr = []
-    #     for frame in frames:
-    #         img = self.tmxdata.get_tile_image_by_gid(frame.gid)
-    #         arr.append(img)
-    #     return arr
 
     def try_get_prop(self, tile, layer):
         try:
