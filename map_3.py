@@ -5,30 +5,12 @@ from settings import Settings
 
 size = Settings().tile_size
 
-class NoTile():
-    def __init__(self):
-        self.id = -1
-        self.collision = 0
-        self.exist = False
-
 class Map3:
     def __init__(self, id='map_1'):
         src = "assets/maps/test_col_n_obj.tmx"
         self.removed_tiles = []
         self.collision_grid = []
         self.layers_amount = 0
-        self.base_tile_prop = {
-            'id': -1, 
-            'collision': 0, 
-            'is_overlay': 0, 
-            'type': '', 
-            'value': '', 
-            'width': str(size), 
-            'height': str(size), 
-            'frames': [],
-            'exist': True,
-            'frame_images': []
-        }
         self.mobile_collision_grid = {}
         self.tmxdata = load_pygame(src, pixelalpha=True)
         self.tiles, self.objects, self.colliders = self.get_tile_grid()
@@ -95,10 +77,6 @@ class Map3:
         for obj in self.objects:
             img = pygame.transform.scale(obj.image, (size, size))
             screen.blit(img, (obj.x, obj.y))
-        # for col in self.colliders:
-        #     hh = pygame.Surface((col.rect.width, col.rect.height))
-        #     hh.fill((200,0,0))
-        #     screen.blit(hh, (col.rect.x, col.rect.y))
     
     def blit_overlay(self, player_rect, screen):
         x = int((player_rect.x + size / 2) // size)
@@ -137,6 +115,9 @@ class Map3:
     def change_state(self, pos):
         x = int((pos[0] + size / 2) // size)
         y = int((pos[1] + size / 2) // size)
+        dir = 'up'
+        if dir == 'up':
+            y -= 1
         for i, layer in enumerate(self.tiles[y - 1][x]["layers"]):
             if layer.type == "door":
                 self.tiles[y][x]["layers"][i].change_state()
@@ -149,7 +130,7 @@ class Map3:
             self.layers_amount = layer_index + 1
             if isinstance(layer, pytmx.TiledTileLayer):
                 for tile in layer.tiles():
-                    properties = self.try_get_prop(tile, layer_index)
+                    properties = self.tmxdata.get_tile_properties(tile[0], tile[1], layer_index)
                     properties["frame_images"] = [self.tmxdata.get_tile_image_by_gid(frame.gid) for frame in properties["frames"]]
                     tile_obj = Tile(tile, properties)
                     tiles[tile[1]][tile[0]]["layers"].append(tile_obj)
@@ -174,15 +155,6 @@ class Map3:
                 tiles[y].append({"x": x * size, "y": y * size, "layers": []})
         return tiles
 
-    def try_get_prop(self, tile, layer):
-        try:
-            properties = self.tmxdata.get_tile_properties(tile[0], tile[1], layer)
-        except ValueError:
-            properties = self.base_tile_prop
-        if properties is None:
-            properties = self.base_tile_prop
-        return properties
-
 class Collider:
     def __init__(self, obj, id=-1):
         self.id = id
@@ -191,11 +163,13 @@ class Collider:
             (obj.x * 2, obj.y * 2),
             (obj.width * 2, obj.height * 2)
         )
-        self.polygon_type = None
-        if hasattr(obj, "points"):
-            self.polygon = Polygon([p for p in obj.points])
-            self.polygon_type = self.polygon.type
-            self.rect = pygame.Rect((self.polygon.x, self.polygon.y), (size, size))
+        self.is_polygon = hasattr(obj, "points")
+        if self.is_polygon:
+            self.x = min([p[0] for p in obj.points]) * 2
+            self.y = min([p[1] for p in obj.points]) * 2
+            self.dots = []
+            self.get_dots(obj.points)
+            self.rect = pygame.Rect((self.x, self.y), (size, size))
 
     def move(self, x, y, id):
         if self.id == id:
@@ -203,51 +177,20 @@ class Collider:
 
     def is_colliding(self, rect):
         if self.rect.colliderect(rect):
-            if self.polygon_type:
-                return self.check_polygon_collision(rect)
+            if self.is_polygon:
+                for point in self.dots:
+                    if rect.colliderect(point):
+                        return True
             else:
                 return True
+        return False
 
-    def check_polygon_collision(self, rect):
-        if self.polygon_type == 'br':
-            y = rect.top % 32
-            x = rect.left % 32
-            return x < 32 - y
-        elif self.polygon_type == 'tr':
-            y = rect.bottom % 32
-            x = rect.left % 32
-            return x < y
-        elif self.polygon_type == 'bl':
-            y = rect.top % 32
-            x = rect.right % 32
-            return x > y
-        elif self.polygon_type == 'tl':
-            y = rect.bottom % 32
-            x = rect.right % 32
-            # print(rect)
-            print(f"x: {x}, y: {y}")
-            print(x > 32 - y)
-            return x > 32 - y
-
-class Polygon:
-    def __init__(self, points):
-        self.x = min([p[0] for p in points]) * 2
-        self.y = min([p[1] for p in points]) * 2
-        self.points = points
-        self.type = self.get_type(points)
-    
-    def get_type(self, points):
-        corners = {
-            "tl": (self.x, self.y),
-            "tr": (self.x + size, self.y),
-            "bl": (self.x, self.y + size),
-            "br": (self.x + size, self.y + size)
-        }
-        type = ''
-        for key, val in corners.items():
-            if val not in [(p[0] * 2, p[1] * 2) for p in points]:
-                type = key
-        return type
+    def get_dots(self, points):
+        points = [(p[0] * 2, p[1] * 2) for p in points]
+        vartical_down = (self.x, self.y) in points and (self.x + size, self.y + size) in points
+        for val in range(0,32):
+            mod = val if vartical_down else size - val
+            self.dots.append(pygame.Rect((self.x + mod, self.y + val), (1, 1)))
 
 class MapObject(pygame.sprite.Sprite):
     def __init__(self, img, obj):
