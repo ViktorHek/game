@@ -56,11 +56,12 @@ class Map3:
         }
         return posible_moves
 
-    def not_colliding(self, dir, character):
+    def not_colliding(self, dir, character, in_battle=False):
         not_colliding = True
+        speed = 32 if in_battle else character.speed
         r = character.rect.move(
-            character.movement[dir][0] * character.speed,
-            character.movement[dir][1] * character.speed
+            character.movement[dir][0] * speed,
+            character.movement[dir][1] * speed
         )
         rect = character.get_hitbox(r)
         for col in self.colliders:

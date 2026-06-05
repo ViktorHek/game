@@ -158,21 +158,26 @@ class Battle():
                     self.action_wheel_target = key
 
     def handle_movement(self, key, is_down):
+        c = self.obj[self.id]
         if self.d20.active and self.d20.animation_active == False:
             self.melee_attack(self.action_wheel.current_id)
             self.d20.reset()
-        c = self.obj[self.id]
         if is_down or c.steps_amount < 1:
             return
-        pos = [c.rect.x // self.settings.tile_size, c.rect.y // self.settings.tile_size]
-        is_moving = False
+        # pos = [c.rect.x // self.settings.tile_size, c.rect.y // self.settings.tile_size]
+        # is_moving = False
         dir = get_key_text(key)
-        target_pos = get_adjasent_cord(pos, dir)
-        if target_pos in self.map.available_tiles:
-            is_moving = True
+        move_to = c.rect.move(
+            c.movement[dir][0] * 32,
+            c.movement[dir][1] * 32
+        )
+        is_moving = move_to in self.map.available_tiles
+        # target_pos = get_adjasent_cord(pos, dir)
+        # if target_pos in self.map.available_tiles:
+        #     is_moving = True
         if self.walking_animation == False and is_moving:
             self.walking_animation = True
-            self.obj[self.id].moving_to = target_pos
+            self.obj[self.id].moving_to = move_to
             self.obj[self.id].handle_movement(key, True)
 
     def start_roll(self):
@@ -180,8 +185,7 @@ class Battle():
 
     def melee_attack(self, id):
         dice = self.d20.roll(show_animation=False)
-        if True:
-        # if dice >= self.obj[id].ac or dice == 20:
+        if dice >= self.obj[id].ac or dice == 20:
             if dice == 20:
                 self.dialog = Dialog(["Criticla hit!"])
             else:

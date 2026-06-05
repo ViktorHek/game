@@ -24,7 +24,7 @@ def get_key_text(key):
     elif key == pygame.K_UP:
         text = 'up'
     else:
-        print('key missing in utils/get_key_text')
+        print(f'key missing for key: {key}')
     return text
 
 def get_shadow_surf(img, scale=1.1, offset=2):

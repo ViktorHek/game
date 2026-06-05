@@ -17,16 +17,16 @@ class OverWorld():
         self.settings = Settings()
         self.map = Map3("map_2")
         self.player = Player()
-        self.npc_1 = Npc('jon', (5, 14), movement_pattern='random')
+        self.npc_1 = Npc('jon', (5, 5), movement_pattern='random')
         self.npc_2 = Npc('bob', (11, 12), movement_pattern=['right', 'down', 'up', 'left'])
         self.npc_3 = Npc('mike', (15, 8))
-        # self.npc_group = [self.npc_1, self.npc_2, self.npc_3]
-        # self.npc_obj = {
-        #     'jon': Npc('jon', (5, 14), movement_pattern='random'),
-        #     'bob': Npc('bob', (11, 12), movement_pattern=['right', 'down', 'up', 'left']),
-        #     'mike': Npc('mike', (15, 8))
-        # }
-        self.npc_group = []
+        self.npc_group = [self.npc_1, self.npc_2, self.npc_3]
+        self.npc_obj = {
+            'jon': Npc('jon', (5, 14), movement_pattern='random'),
+            'bob': Npc('bob', (11, 12), movement_pattern=['right', 'down', 'up', 'left']),
+            'mike': Npc('mike', (15, 8))
+        }
+        # self.npc_group = []
         self.dialog = None
 
     def update(self):
@@ -82,18 +82,10 @@ class OverWorld():
             self.player.handle_movement(key, is_down)
 
     def handle_action(self):
-        # self.player.change_action('attack')
         x, y = self.player.get_coordinates()
-        dir = self.player.dir
+        x += self.player.movement[self.player.dir][0]
+        y += self.player.movement[self.player.dir][1]
         npc = None
-        if dir == 'right':
-            x += 1
-        elif dir == 'left':
-            x -= 1
-        elif dir == 'down':
-            y += 1
-        elif dir == 'up':
-            y -= 1
         for npc_id, pos in self.map.mobile_collision_grid.items():
             if x == pos[0] and y == pos[1]:
                 npc = npc_id
@@ -102,9 +94,6 @@ class OverWorld():
         if npc == 'mike':
             self.game.fade('battle')
             self.game.components['battle'].init_battle()
-            # self.start_battle = True
-            # self.transition_to = 'battle'
-            # self.fade.animation_active = True
         else:
             if npc in dialog_texts:
                 self.dialog = Dialog(dialog_texts[npc])

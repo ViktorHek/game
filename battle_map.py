@@ -1,6 +1,6 @@
 import pygame
+import copy
 from map import Map
-from utils import get_adjasent_cord
 
 class BattleMap(Map):
     def __init__(self, map_id='battle_1'):
@@ -17,50 +17,39 @@ class BattleMap(Map):
         self.update_grid(self.available_tiles, self.unavailable_tiles)
 
     def get_tile_availability(self, battle_object, current_id):
-        c = battle_object[current_id]
+        char = copy.copy(battle_object[current_id])
+        if char.steps_amount < 1:
+            return
+        char.speed = 32
         self.available_tiles = []
         self.unavailable_tiles = []
-        pos = [c.rect.x // self.settings.tile_size, c.rect.y // self.settings.tile_size]
-        dirs = get_adjasent_cord(pos)
-        if c.steps_amount:
-            for pos in dirs.values():
-                collision_id = self.get_tile_collision(pos)
-                if collision_id == None or collision_id == current_id:
-                    self.available_tiles.append([pos[0], pos[1]])
-                else:
-                    self.unavailable_tiles.append([pos[0], pos[1]])
+        posible_moves = self.check_collision(char)
+        r, m, s = char.rect, char.movement, char.speed
+        for key, val in posible_moves.items():
+            pos = [r.x + m[key][0] * s, r.y + m[key][1] * s]
+            if val:
+                self.available_tiles.append(pos)
+            else:
+                self.unavailable_tiles.append(pos)
 
-    def get_grid_surf(self, color, is_vertical):
-        s = (1, self.size) if is_vertical else (self.size, 1)
-        surf = pygame.Surface(s).convert_alpha()
-        surf.fill(color)
+    def get_grid_surf(self, color):
+        surf = pygame.Surface((self.size, self.size), pygame.SRCALPHA).convert_alpha()
+        for line in [(0, 0, True), (0, 0, False), (0, self.size-1, True), (self.size-1, 0, False)]:
+            wh = (self.size, 1) if line[2] else (1, self.size)
+            l = pygame.Surface(wh).convert()
+            l.fill(color)
+            surf.blit(l, (line[0], line[1]))
         return surf
 
     def get_spacing_grid(self, available_tiles=[], unavailable_tiles=[]):
         w, h = self.settings.screen_width, self.settings.screen_height
         grid = pygame.Surface((w, h), pygame.SRCALPHA).convert_alpha()
-        vertical_unavaliable = self.get_grid_surf(pygame.Color(255,0,0,100), True)
-        horizontal_unavaliable = self.get_grid_surf(pygame.Color(255,0,0,100), False)
-        vertical_avaliable = self.get_grid_surf(pygame.Color(0,0,255,100), True)
-        horizontal_avaliable = self.get_grid_surf(pygame.Color(0,0,255,100), False)
-        x = 0
-        y = 0
-        while y < self.settings.screen_height:
-            while x < self.settings.screen_width:
-                pos = [x // self.size, y // self.size]
-                if pos in unavailable_tiles:
-                    grid.blit(vertical_unavaliable, (x, y))
-                    grid.blit(vertical_unavaliable, (x + self.size - 1, y))
-                    grid.blit(horizontal_unavaliable, (x, y))
-                    grid.blit(horizontal_unavaliable, (x, y + self.size - 1))
-                if pos in available_tiles:
-                    grid.blit(vertical_avaliable, (x, y))
-                    grid.blit(vertical_avaliable, (x + self.size - 1, y))
-                    grid.blit(horizontal_avaliable, (x, y))
-                    grid.blit(horizontal_avaliable, (x, y + self.size - 1))
-                x += self.size
-            x = 0
-            y += self.size
+        available = self.get_grid_surf(pygame.Color(0,0,255,100))
+        unavailable = self.get_grid_surf(pygame.Color(255,0,0,100))
+        for tile_a in self.available_tiles:
+            grid.blit(available, (tile_a[0], tile_a[1]))
+        for tile_u in self.unavailable_tiles:
+            grid.blit(unavailable, (tile_u[0], tile_u[1]))
         return grid
 
     def update_grid(self, available_tiles, unavailable_tiles):
