@@ -4,6 +4,7 @@ from page import Page
 from font import PlainText, Title
 from settings import Settings
 from button import CheckBoxList
+from image import Image
 
 class AbilityPage(Page):
     def __init__(self):
@@ -40,9 +41,9 @@ class AbilityPage(Page):
         if player["general"]["race"] == "" or player["religion"]["practice"] == "":
             return dic
         races = self.get_db("data/rases.json")
-        dic["abi"] = races[player["general"]["race"]]["abi"]
         practice = self.get_db("data/classes.json")
         p = practice[player["religion"]["practice"]]
+        dic["abi"] = races[player["general"]["race"]]["abi"]
         dic["pa"] = p["proficiency_choices"]["choose"]
         dic["po"] = p["proficiency_choices"]["options"]
         dic["primary"] = p["primary_skill"]
@@ -141,11 +142,11 @@ class AbilityBox:
         self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', 22)
         self.big_font = pygame.font.Font('assets/font/ThaleahFat.ttf', 42)
         self.label = self.font.render(label, False, Settings().text_color)
-        self.holder_image = img(url + "5 Holders/3.png")
-        self.button_holer = img(url + "5 Holders/7.png")
-        self.minus_img = img(url + "2 Icons/2.png")
-        self.plus_img = img(url + "2 Icons/3.png")
-        self.bonus_image = img(url + "5 Holders/6.png")
+        self.holder_image = Image(url + "5 Holders/3.png").image
+        self.button_holer = Image(url + "5 Holders/7.png").image
+        self.minus_img = Image(url + "2 Icons/2.png").image
+        self.plus_img = Image(url + "2 Icons/3.png").image
+        self.bonus_image = Image(url + "5 Holders/6.png").image
         img_rect = self.image.get_rect()
         left_side = self.image.get_rect(width = img_rect.width - self.holder_image.get_width())
         self.minus_rect = self.button_holer.get_rect(centery = left_side.centery, right = left_side.width // 2)
@@ -154,7 +155,9 @@ class AbilityBox:
         self.image_holder_container = self.holder_image.get_rect(
             centery = img_rect.centery, right = img_rect.right-8
         )
-        self.bonus_image_rect = self.bonus_image.get_rect(top=self.image_holder_container.top - 8, left = self.image_holder_container.left)
+        self.bonus_image_rect = self.bonus_image.get_rect(
+            top = self.image_holder_container.top - 8, left = self.image_holder_container.left
+        )
         self.blit_image()
 
     def blit_image(self):
@@ -164,19 +167,18 @@ class AbilityBox:
         self.ability_text = self.big_font.render(val, False, Settings().text_color)
         self.image.blit(self.button_holer, self.minus_rect)
         self.image.blit(self.button_holer, self.plus_rect)
-        self.image.blit(self.minus_img, self.minus_img.get_rect(center = self.minus_rect.center))
-        self.image.blit(self.plus_img, self.plus_img.get_rect(center = self.plus_rect.center))
+        self.image.blit(self.minus_img, self.minus_rect)
+        self.image.blit(self.plus_img, self.plus_rect)
         self.image.blit(self.label, self.label_container)
         self.image.blit(self.holder_image, self.image_holder_container)
-        self.image.blit(self.ability_text, self.ability_text.get_rect(center = self.image_holder_container.center))
         self.image.blit(self.bonus_image, self.bonus_image_rect)
+        self.image.blit(self.ability_text, self.ability_text.get_rect(center = self.image_holder_container.center))
         self.image.blit(self.bonus_text.text, self.bonus_text.text.get_rect(center = self.bonus_image_rect.center))
 
     def handle_click(self):
         pos = pygame.mouse.get_pos()
-        pa, p, m = self.parent, self.plus_rect, self.minus_rect
-        min = pygame.Rect((pa.x + m.x, pa.y + m.y), (m.width, m.height))
-        plus = pygame.Rect((pa.x + p.x, pa.y + p.y), (p.width, p.height))
+        min = self.minus_rect.move(self.parent.x, self.parent.y)
+        plus = self.plus_rect.move(self.parent.x, self.parent.y)
         if min.collidepoint(pos):
             return "-"
         if plus.collidepoint(pos):
@@ -197,6 +199,3 @@ class AbilityBox:
     
     def get_value(self):
         return self.values[self.value_index] + self.bonus
-    
-def img(src):
-    return pygame.image.load(src).convert_alpha()

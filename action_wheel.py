@@ -1,5 +1,6 @@
 import pygame
 from font import Text
+from image import Image
 
 class ActionWheel:
     def __init__(self):
@@ -16,41 +17,33 @@ class ActionWheel:
             'talk': {'slot': 4, 'icon': 7, 'pos': (28, 66)},
             'other': {'slot': 5, 'icon': 8, 'pos': (-28, 66)}
         }
-        self.actions = []
+        self.base = Image("assets/ui_sprites/ActionWheel/aw_base.png", parent=self.target_rect, scale=2)
         self.load_images()
-        self.image = pygame.Surface((self.base_rect.width, self.base_rect.height), pygame.SRCALPHA).convert_alpha()
-        self.image.blit(self.base_image, (0,0))
-        self.rect = self.image.get_rect(center = self.target_rect.center)
         self.active_option = ''
         self.active_option_text = Text('')
         self.active_option_rect = self.active_option_text.text.get_rect()
         self.action = ''
 
     def load_images(self):
-        url = "assets/ui_sprites/ActionWheel/"
-        curl = "assets/ui_sprites/Sprites/Content/"
-        self.base_image = get_image(f"{url}aw_base.png", 2)
-        self.base_rect = self.base_image.get_rect(center = self.target_rect.center)
-        self.holder_image = get_image(f"{curl}5 Holders/24.png")
         self.actions = []
         for key, val in self.actions_db.items():
-            self.actions.append(WheelAction(key, val['slot'], val['icon'], val['pos'], self.target_rect))
+            self.actions.append(WheelAction(key, val, self.target_rect))
 
     def update(self):
         pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos):
+        if self.base.rect_relative.collidepoint(pos):
             for a in self.actions:
                 val = a.check_hover(pos)
                 if val != None and val != self.active_option:
                     self.active_option = val
-                    self.active_option_text = Text(val, parent=self.rect, is_bold=True)
+                    self.active_option_text = Text(val, parent=self.base.rect_relative, is_bold=True)
         else:
             self.active_option = ''
 
     def change_target(self, character):
         self.target_rect = character.rect
         self.current_id = character.id
-        self.rect = self.image.get_rect(center = self.target_rect.center)
+        self.base.rect_relative = self.base.image.get_rect(center = self.target_rect.center)
         self.load_images()
 
     def handle_click(self, pos=None):
@@ -64,7 +57,7 @@ class ActionWheel:
         return val
 
     def blitme(self, screen):
-        screen.blit(self.image, self.rect)
+        screen.blit(self.base.surf, self.base.rect_relative)
         for a in self.actions:
             a.blitme(screen)
         if self.active_option:
@@ -72,18 +65,18 @@ class ActionWheel:
             # screen.blit(self.active_option_text.text, self.active_option_rect)
 
 class WheelAction:
-    def __init__(self, value, index, icon, pos, target_rect):
+    def __init__(self, value, data, target_rect):
         url = "assets/ui_sprites/Sprites/Content/"
         holder_image = get_image(f"{url}5 Holders/24.png")
-        icon = get_image(f"{url}1 Items/{icon}.png")
+        icon = get_image(f"{url}1 Items/{data['icon']}.png")
         self.value = value
         wh = (holder_image.get_width(), holder_image.get_height())
         self.surf = pygame.Surface(wh, pygame.SRCALPHA).convert_alpha()
         c = target_rect.center
-        self.rect = self.surf.get_rect(center = (c[0] + pos[0], c[1] + pos[1]))
+        self.rect = self.surf.get_rect(center = (c[0] + data['pos'][0], c[1] + data['pos'][1]))
         self.surf.blit(holder_image, (0,0))
         self.surf.blit(icon, (8,8))
-        self.hover_img = get_image(f"assets/ui_sprites/ActionWheel/aw_{index}.png", 2)
+        self.hover_img = get_image(f"assets/ui_sprites/ActionWheel/aw_{data['slot']}.png", 2)
         self.is_hover = False
         self.hover_rect = self.hover_img.get_rect(center = c)
 
