@@ -32,9 +32,6 @@ class ActionWheel:
     def update(self):
         pos = pygame.mouse.get_pos()
         if self.base.rect.collidepoint(pos):
-            # hover = next(iter(a for a in self.action if a.check_hover(pos) != None), None)
-            # if hover:
-            #     print(hover)
             for a in self.actions:
                 if a.check_hover(pos):
                     self.active_option = a.value
@@ -46,7 +43,6 @@ class ActionWheel:
         self.target_rect = character.rect
         self.base.move(character.rect.center)
         self.current_id = character.id
-        # self.base.rect_relative = self.base.image.get_rect(center = self.target_rect.center)
         self.load_images()
 
     def handle_click(self, pos=None):
@@ -88,9 +84,7 @@ class WheelAction:
             screen.blit(self.hover_img.image, self.hover_img.rect)
 
     def check_hover(self, pos):
-        # print("getting herr")
         if self.rect.collidepoint(pos):
-            # print('WEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
             self.is_hover = True
             return self.value
         else:

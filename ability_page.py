@@ -191,6 +191,7 @@ class AbilityBox:
             self.value_index = next(val for val in l if val > self.value_index and val not in taken)
         else:
             l.reverse()
+            # self.value_index = next((val for val in l if val < self.value_index and val not in taken), 0)
             try:
                 self.value_index = next(val for val in l if val < self.value_index and val not in taken)
             except StopIteration:
