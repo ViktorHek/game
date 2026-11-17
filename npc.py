@@ -6,6 +6,7 @@ class Npc(Character):
     def __init__(self, id, pos, type='goblin', is_ally=False, movement_pattern=None):
         super().__init__(pos, type)
         self.id = id
+        self.name = id
         self.starting_position = pos
         self.prev_pos = pos
         self.rect.x = self.size * pos[0]
@@ -27,6 +28,21 @@ class Npc(Character):
         elif self.rect.x < self.settings.screen_width // 2:
             self.dir = 'right'
         self.handle_dir()
+
+    def handle_movement(self, key, is_down):
+        if key == pygame.K_DOWN:
+            self.moving_down = is_down
+            self.dir = 'down' if is_down else self.dir
+        if key == pygame.K_UP:
+            self.moving_up = is_down
+            self.dir = 'up' if is_down else self.dir
+        if key == pygame.K_RIGHT:
+            self.moving_right = is_down
+            self.dir = 'right' if is_down else self.dir
+        if key == pygame.K_LEFT:
+            self.moving_left = is_down
+            self.dir = 'left' if is_down else self.dir
+
 
     def check_movement(self, posible_moves):
         if self.movement_pattern == None:

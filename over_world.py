@@ -5,15 +5,16 @@ from player import Player
 from settings import Settings
 from npc import Npc
 from dialogs import Dialog, dialog_texts
-from fade_animation import FadeAnimation
 from map import Map
 
 class OverWorld():
     def __init__(self, game):
         self.game = game
         self.name = 'over_world'
+        self.start_battle = False
         self.settings = Settings()
-        self.map = Map("map_1")
+        self.map = Map("test_col_n_obj")
+        # self.map = Map("map_2")
         self.player = Player()
         self.npc_1 = Npc('jon', (6, 6), movement_pattern='random')
         self.npc_2 = Npc('bob', (11, 12), movement_pattern=['right', 'down', 'up', 'left'])
@@ -28,31 +29,39 @@ class OverWorld():
         self.dialog = None
 
     def update(self):
-        self.map.mobile_collision_grid = {}
-        self.map.mobile_collision_grid[self.player.id] = self.player.get_coordinates()
-        for npc in self.npc_group:
-            pos = npc.get_coordinates()
-            self.map.mobile_collision_grid[npc.id] = pos
-        posible_player_moves = self.map.check_collision(self.player)
-        self.player.update(posible_player_moves)
+        self.check_for_battle()
+        self.update_collision_grid()
+        self.move_player()
+        self.move_npc()
+
+    def move_npc(self):
         for npc in self.npc_group:
             posible_npc_moves = self.map.check_collision(npc)
             npc.check_movement(posible_npc_moves)
             npc.update(posible_npc_moves)
 
-    def blitme(self, screen):
-        self.map.blit_all_tiles(screen)
+    def move_player(self):
+        posible_player_moves = self.map.check_collision(self.player)
+        self.player.update(posible_player_moves)
+
+    def update_collision_grid(self):
+        self.map.mobile_collision_grid[self.player.id] = self.player.get_coordinates()
+        self.map.world_collision_grid[self.player.id] = self.player.get_collision_rect()
         for npc in self.npc_group:
-            npc.blitme(screen)
-        self.player.blitme(screen)
-        if self.dialog:
-            self.dialog.blitme(screen)
+            self.map.mobile_collision_grid[npc.id] = npc.get_coordinates()
+            self.map.world_collision_grid[npc.id] = npc.get_collision_rect()
+
+    def check_for_battle(self):
+        if self.start_battle == False:
+            return
+        if self.player.character_sprite.check_animation_done():
+            self.start_battle = False
+            self.game.fade('battle')
+            self.game.components['battle'].init_battle()
 
     def handle_event(self, event):
         if event.type == pygame.QUIT:
             sys.exit()
-        elif event.type == pygame.MOUSEWHEEL:
-            pass # scroll_down = True if event.y < 0 else False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.handle_click()
         elif event.type == pygame.KEYDOWN:
@@ -61,45 +70,65 @@ class OverWorld():
             self.handle_key(event.key, False)
 
     def handle_key(self, key, is_down):
-        if self.dialog:
-            if is_down:
-                self.dialog.next()
-                if self.dialog.done:
-                    self.dialog = None
-            return
-        if key == pygame.K_SPACE:
-            if is_down:
-                self.handle_action()
-        elif key == pygame.K_p:
+        if self.dialog and is_down:
+            self.handle_dialog(key)
+            if self.dialog.done:
+                self.dialog = None
+        elif key == pygame.K_SPACE and is_down:
+            self.handle_action()
+        elif key == pygame.K_p and is_down:
             pass
             # self.game_pause = True
-        elif key == pygame.K_a:
-            if is_down:
-                self.player.change_action('attack')
+        elif key == pygame.K_a and is_down:
+            self.handle_attack()
         else:
             self.player.handle_movement(key, is_down)
 
-    def handle_action(self):
+    def handle_dialog(self, key):
+        if key == pygame.K_SPACE:
+            self.dialog.handle_input(key)
+        elif key == pygame.K_DOWN:
+            self.dialog.move_pointer(True)
+        elif key == pygame.K_UP:
+            self.dialog.move_pointer(False)
+
+    def find_close_npc(self):
+        if self.player.dir == "":
+            return None
         x, y = self.player.get_coordinates()
-        x += self.player.movement[self.player.dir][0]
-        y += self.player.movement[self.player.dir][1]
-        npc = None
+        dir = 'left' if self.player.character_sprite.is_flipped else 'right'
+        x += self.player.movement[dir][0]
+        y += self.player.movement[dir][1]
         for npc_id, pos in self.map.mobile_collision_grid.items():
             if x == pos[0] and y == pos[1]:
-                npc = npc_id
+                return next((x for x in self.npc_group if x.id == npc_id), None)
+        return None
+
+    def handle_attack(self):
+        self.player.character_sprite.change_action('attack')
+        npc = self.find_close_npc()
+        if npc:
+            self.start_battle = True
+
+    def handle_action(self):
+        npc = self.find_close_npc()
         if npc == None:
             return
-        if npc == 'mike':
-            self.game.fade('battle')
-            self.game.components['battle'].init_battle()
+        if npc.id in dialog_texts:
+            self.dialog = Dialog(npc, self.player)
         else:
-            if npc in dialog_texts:
-                self.dialog = Dialog(dialog_texts[npc])
-            else:
-                self.dialog = Dialog(dialog_texts['else'])
+            self.dialog = Dialog(None)
 
     def handle_click(self):
         if self.dialog:
             self.dialog.next()
             if self.dialog.done:
                 self.dialog = None
+
+    def blitme(self, screen):
+        self.map.blit_all_tiles(screen)
+        for npc in self.npc_group:
+            npc.blitme(screen)
+        self.player.blitme(screen)
+        if self.dialog:
+            self.dialog.blitme(screen)

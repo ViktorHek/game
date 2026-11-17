@@ -1,9 +1,13 @@
 import pygame
+from image import Image, add_shadow
 from settings import Settings
 
-class CharacterSprite:
+class CharacterSprite(pygame.sprite.Sprite):
     def __init__(self, pos, type):
+        super().__init__()
         self.type = type
+        self.is_player = type == 'player'
+        self.hair = 'longhair'
         self.settings = Settings()
         self.size = self.settings.tile_size
         self.image = pygame.Surface((160, 96), pygame.SRCALPHA).convert_alpha()
@@ -17,144 +21,91 @@ class CharacterSprite:
         self.is_flipped = False
         self.is_dead = False
         self.skull_image = self.frames['death'][-1]
+        self.queue_delay = 0
+        self.delay = 3
+        self.display_image = self.get_display_image(self.is_player)
 
-    def get_frames(self, type):
-        url = 'assets/tileset/Characters/'
-        hair = 'bowlhair'
-        npc_hair = 'longhair'
-        frames = {}
-        mall = {
-            'player': {
-                'idle': [
-                    f'{url}Human/IDLE/base_idle_strip9.png',
-                    f'{url}Human/IDLE/{hair}_idle_strip9.png',
-                    f'{url}Human/IDLE/tools_idle_strip9.png'
-                ],
-                'walk': [
-                    f'{url}Human/WALKING/base_walk_strip8.png', 
-                    f'{url}Human/WALKING/{hair}_walk_strip8.png',
-                    f'{url}Human/WALKING/tools_walk_strip8.png',
-                ],
-                'attack': [
-                    f'{url}Human/ATTACK/base_attack_strip10.png', 
-                    f'{url}Human/ATTACK/{hair}_attack_strip10.png',
-                    f'{url}Human/ATTACK/tools_attack_strip10.png',
-                ],
-                'hurt': [
-                    f'{url}Human/HURT/base_hurt_strip8.png', 
-                    f'{url}Human/HURT/{hair}_hurt_strip8.png',
-                    f'{url}Human/HURT/tools_hurt_strip8.png',
-                ],
-                'death': [
-                    f'{url}Human/DEATH/base_death_strip13.png', 
-                    f'{url}Human/DEATH/{hair}_death_strip13.png',
-                    f'{url}Human/DEATH/tools_death_strip13.png',
-                ]
-            },
+    def get_display_image(self, is_player, scale=6):
+        base = pygame.transform.flip(
+            self.frames['idle'][0],
+            not is_player,
+            False
+        )
+        wh = (base.get_width() * scale, base.get_height() * scale)
+        img = pygame.transform.scale(base, wh)
+        img_with_shadow = add_shadow(img)
+        return img_with_shadow
+
+    def get_url(self, type, hair):
+        base = 'assets/tileset/Characters'
+        self.mall = {
             'human': {
-                'idle': [
-                    f'{url}Human/IDLE/base_idle_strip9.png',
-                    f'{url}Human/IDLE/{npc_hair}_idle_strip9.png',
-                    f'{url}Human/IDLE/tools_idle_strip9.png'
-                ],
-                'walk': [
-                    f'{url}Human/WALKING/base_walk_strip8.png', 
-                    f'{url}Human/WALKING/{npc_hair}_walk_strip8.png',
-                    f'{url}Human/WALKING/tools_walk_strip8.png',
-                ],
-                'attack': [
-                    f'{url}Human/ATTACK/base_attack_strip10.png', 
-                    f'{url}Human/ATTACK/{npc_hair}_attack_strip10.png',
-                    f'{url}Human/ATTACK/tools_attack_strip10.png',
-                ],
-                'hurt': [
-                    f'{url}Human/HURT/base_hurt_strip8.png', 
-                    f'{url}Human/HURT/{npc_hair}_hurt_strip8.png',
-                    f'{url}Human/HURT/tools_hurt_strip8.png',
-                ],
-                'death': [
-                    f'{url}Human/DEATH/base_death_strip13.png', 
-                    f'{url}Human/DEATH/{npc_hair}_death_strip13.png',
-                    f'{url}Human/DEATH/tools_death_strip13.png',
-                ]
+                'layers': ['base', hair, 'tools'],
+                'actions': {'idle': 9, 'walk': 8, 'attack': 10, 'hurt': 8, 'death': 13, 'doing': 8}
             },
             'goblin': {
-                'idle': [
-                    f'{url}Goblin/PNG/spr_idle_strip8.png',
-                ],
-                'walk': [
-                    f'{url}Goblin/PNG/spr_walk_strip8.png', 
-                ],
-                'attack': [
-                    f'{url}Goblin/PNG/spr_attack_strip10.png', 
-                ],
-                'hurt': [
-                    f'{url}Goblin/PNG/spr_hurt_strip8.png', 
-                ],
-                'death': [
-                    f'{url}Goblin/PNG/spr_death_strip9.png',
-                ]
+                'layers': ['spr'],
+                'actions': {'idle': 8, 'walk': 8, 'attack': 10, 'hurt': 8, 'death': 9, 'doing': 8}
             },
             'skeleton': {
-                'idle': [
-                    f'{url}Skeleton/PNG/skeleton_idle_strip6.png',
-                ],
-                'walk': [
-                    f'{url}Skeleton/PNG/skeleton_walk_strip8.png', 
-                ],
-                'attack': [
-                    f'{url}Skeleton/PNG/skeleton_attack_strip7.png', 
-                ],
-                'hurt': [
-                    f'{url}Skeleton/PNG/skeleton_hurt_strip7.png', 
-                ],
-                'death': [
-                    f'{url}Skeleton/PNG/skeleton_death_strip10.png',
-                ]
+                'layers': ['skeleton'],
+                'actions': {'idle': 6, 'walk': 8, 'attack': 7, 'hurt': 7, 'death': 10}
             }
         }
+        return_value = {}
+        for key, val in self.mall[type]['actions'].items():
+            x = key.upper() if type == 'human' else 'PNG'
+            return_value[key] = [
+                f"{base}/{type.capitalize()}/{x}/{l}_{key}_strip{val}.png" for l in self.mall[type]['layers']]
+        return return_value
+
+    def get_frames(self, type):
+        player_hair = 'bowlhair'
+        npc_hair = 'longhair'
+        new_type = 'human' if type == 'player' else type
+        new_hair = player_hair if type == 'player' else npc_hair
+        mall = self.get_url(new_type, new_hair)
+        frames = {}
         distance_between_frames = 192
-        for key, val in mall[type].items():
-            # frame_amount = int(pygame.image.load(val[0]).convert().get_width() / distance_between_frames)
-            frame_amount = int(val[0][-6:-4].replace('p',''))
+        for key, val in mall.items():
+            frame_amount = self.mall[new_type]['actions'][key]
             frames[key] = []
             for i in range(frame_amount):
                 s = pygame.Surface((160, 96), pygame.SRCALPHA).convert_alpha()
-                x = (i * distance_between_frames + 16) * -1
-                y = -16
+                x = i * distance_between_frames + 16
                 for t in val:
-                    img = pygame.image.load(t).convert_alpha()
-                    img_scaled = pygame.transform.scale(img, (img.get_width() * 2, img.get_height() * 2))
-                    s.blit(img_scaled, (x, y))
+                    s.blit(Image(t, scale=2).image, (-x, -16))
                 frames[key].append(s)
         return frames
 
+    def change_action(self, action):
+        if self.action == action and action not in ['idle', 'doing']:
+            return
+        self.counter = 0
+        self.frame = 0
+        self.frame_counter = 0
+        self.action = action
+
+    def check_animation_done(self):
+        return (self.counter + 1) // self.delay == len(self.frames[self.action])
+
     def handle_animation_counter(self):
-        delay = 3
-        self.frame_counter = self.counter // delay
-        done = (self.counter + 1) // delay == len(self.frames[self.action])
-        if len(self.queue):
-            if self.queue[0] in self.frames.keys():
-                if self.action == self.queue[0]:
-                    if done:
-                        self.is_dead = self.action == 'death'
-                        del self.queue[0]
-                    else:
-                        self.counter += 1
-                else:
-                    self.counter = 0
-                    self.frame_counter = 0
-                    self.action = self.queue[0]
-            else:
-                self.queue[0] -= 1
-                if self.queue[0] == 0:
+        self.frame_counter = self.counter // self.delay
+        done = (self.counter + 1) // self.delay == len(self.frames[self.action])
+        if len(self.queue) and self.queue_delay == 0:
+            if self.action == self.queue[0]:
+                if done:
+                    self.is_dead = self.action == 'death'
                     del self.queue[0]
+                else:
+                    self.counter += 1
+            else:
+                self.change_action(self.queue[0])
         else:
+            self.queue_delay = self.queue_delay - 1 if self.queue_delay > 0 else 0
             if done:
-                self.counter = 0
-                self.frame_counter = 0
-                if self.action in self.single_animation:
-                    self.action = 'idle'
+                action = "doing" if self.action == "doing" else "idle"
+                self.change_action(action)
             else:
                 self.counter += 1
 
@@ -164,5 +115,9 @@ class CharacterSprite:
             screen.blit(self.skull_image, offset)
         else:
             self.handle_animation_counter()
-            img = pygame.transform.flip(self.frames[self.action][self.frame_counter], self.is_flipped, False)
+            img = pygame.transform.flip(
+                self.frames[self.action][self.frame_counter],
+                self.is_flipped,
+                False
+            )
             screen.blit(img, offset)

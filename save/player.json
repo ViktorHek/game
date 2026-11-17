@@ -1,40 +1,41 @@
 {
     "general": {
-        "name": "",
-        "age": 0,
-        "gender": "",
-        "race": "dwarf",
+        "name": "fwefwe",
+        "age": "222",
+        "gender": "male",
+        "race": "human",
         "size": "medium",
-        "speed": 50,
-        "traits": [
-            "darkvision",
-            "resilience",
-            "Stonecunning"
-        ],
+        "speed": 60,
+        "traits": [],
         "level": 1
     },
     "religion": {
-        "practice": "rabbi",
+        "practice": "priest",
         "faith": "",
-        "hit_die": 6
+        "hit_die": 10
     },
     "stats": {
-        "strength": 0,
-        "wisdom": 0,
-        "constitution": 2,
-        "dexterity": 0,
-        "intelligence": 0,
-        "charisma": 0,
-        "strength_modifier": -5,
-        "wisdom_modifier": -5,
-        "constitution_modifier": -4,
-        "dexterity_modifier": -5,
-        "intelligence_modifier": -5,
-        "charisma_modifier": -5
+        "strength": 8,
+        "wisdom": 10,
+        "constitution": 15,
+        "dexterity": 12,
+        "intelligence": 14,
+        "charisma": 15
     },
-    "proficiencies": [],
+    "proficiencies": [
+        "arcana",
+        "animals"
+    ],
     "miracles": {
+        "save_dc": 0,
+        "spell_modifier": 0,
         "cantrips": [
+            0,
+            2,
+            8,
+            9
+        ],
+        "lv0": [
             0,
             2,
             8,

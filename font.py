@@ -1,29 +1,42 @@
-from turtle import left
-
 import pygame
 import pygame.font
 from settings import Settings
 
 class PlainText:
-    def __init__(self, text, size=18, color=None):
+    def __init__(self, text, size=18, color=None, font_family='assets/font/ThaleahFat.ttf', parent=None):
         pygame.font.init()
         self.size = size
         self.text_color = color if color else Settings().text_color
-        self.font = pygame.font.Font('assets/font/ThaleahFat.ttf', size)
-        self.text = self.font.render(text, False, self.text_color).convert_alpha()
+        self.font = pygame.font.Font(font_family, size)
+        self.text = self.font.render(text, font_family == 'assets/font/ThaleahFat.ttf', self.text_color).convert_alpha()
         self.image = self.text
-        self.rect = self.text.get_rect()
+        self.rect = self.text.get_rect(center = parent.center) if parent else self.text.get_rect()
+        self.rect_relative = self.text.get_rect(center = (parent.width / 2, parent.height / 2)) if parent else self.text.get_rect()
 
     def blitme(self, screen):
         screen.blit(self.image, self.rect)
 
 class Text:
-    def __init__(self, text, parent=None, size=18, has_underline=False, is_bold=True, color=None, pos=None):
+    def __init__(
+            self, 
+            text, 
+            parent=None, 
+            size=18, 
+            has_underline=False, 
+            is_bold=True, 
+            color=None, 
+            pos=None, 
+            font_family=None,
+            top_left=None
+        ):
         pygame.font.init()
         self.text_color = color if color else Settings().text_color
         src = 'assets/font/ThaleahFat.ttf' if is_bold else 'assets/font/Barlow-Black.ttf'
-        self.font = pygame.font.Font(src, size)
         smooth_render = not is_bold
+        if font_family != None:
+            src = font_family
+            smooth_render = True
+        self.font = pygame.font.Font(src, size)
         self.text = self.font.render(text, smooth_render, self.text_color).convert_alpha()
         wh = (self.text.get_width(), self.text.get_height())
         self.image = pygame.Surface(wh, pygame.SRCALPHA).convert_alpha()
@@ -31,15 +44,16 @@ class Text:
         self.under_line_img = pygame.image.load(
             'assets/ui_sprites/Sprites/Content/5 Holders/20_2.png'
         ).convert_alpha()
+        self.relative_rect = self.image.get_rect()
         if parent:
             self.rect = self.image.get_rect(center = parent.center)
             self.relative_rect = self.image.get_rect(center = (parent.width / 2, parent.height / 2))
         elif pos:
             self.rect = self.image.get_rect(left = pos[0], top = pos[1])
-            self.relative_rect = self.image.get_rect(left = pos[0], top = pos[1])            
+        elif top_left:
+            self.rect = self.image.get_rect(x = top_left[0], y = top_left[1])
         else:
             self.rect = self.image.get_rect()
-            self.relative_rect = self.image.get_rect()
         if has_underline:
             self.render_underline()
 
@@ -66,8 +80,8 @@ class Title(Text):
         self.image.blit(self.text, (rect.x, rect.y))
 
 class SmallTitle(Text):
-    def __init__(self, text, parent=None, size=26, pos=None):
-        super().__init__(text, parent=parent, size=size, has_underline=True, is_bold=True, pos=pos)
+    def __init__(self, text, parent=None, size=26, pos=None, top_left=None):
+        super().__init__(text, parent=parent, size=size, has_underline=True, is_bold=True, pos=pos, top_left=top_left)
         self.under_line_img = pygame.image.load("assets/ui_sprites/Sprites/Content/5 Holders/19.png").convert_alpha()
         self.image = pygame.Surface((self.text.get_width(), self.text.get_height() + self.under_line_img.get_height() - 8), pygame.SRCALPHA)
         r = self.image.get_rect()
@@ -75,12 +89,12 @@ class SmallTitle(Text):
         self.image.blit(self.text, (0,0))
         self.image.blit(self.under_line_img, under_line_img_rect)
 
+
 class LongText(Text):
-    def __init__(self, text, parent, animated=False, size=16, has_underline=True):
+    def __init__(self, text, parent, size=16, has_underline=True):
         super().__init__(text, parent, size=size, has_underline=has_underline, is_bold=False)
         self.text_string = text
         self.has_underline = has_underline
-        self.animated = animated
         self.width = parent.width
         self.size = size
         self.text_list = self.get_text_list()
@@ -88,15 +102,7 @@ class LongText(Text):
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         self.rect = self.image.get_rect(left = parent.left, top = parent.top)
         self.counter = 0
-        if self.animated == False:
-            self.render_text()
-
-    def update(self):
-        gg=0
-    #     for i, word in enumerate(self.text_list):
-    #         letter = self.font.render(
-    #             [self.text_string[self.counter]], True, self.text_color
-    #         )
+        self.render_text()
 
     def render_text(self):
         x = 0
@@ -130,3 +136,68 @@ class LongText(Text):
                 list[line].append(t)
             x += t.get_width()
         return list
+
+class AnimatedText(Text):
+    def __init__(self, text, parent, size=16, has_underline=False):
+        super().__init__(text, parent, size=size, has_underline=has_underline, is_bold=False)
+        self.text_string = text
+        self.has_underline = has_underline
+        self.width = parent.width
+        self.size = size
+        self.text_list = self.get_text_list()
+        self.height = len(self.text_list) * size + size
+        self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.rect = self.image.get_rect(left = parent.left, top = parent.top)
+        self.counter = 0
+        self.x = 0
+        self.line = 0
+        self.animation_done = False
+
+    def update(self):
+        if self.animation_done:
+            return
+        letter = self.text_list[self.line][self.counter]
+        self.image.blit(letter, (self.x, self.line * self.size))
+        if self.counter + 1 >= len(self.text_list[self.line]):
+            self.counter = 0
+            self.x = 0
+            self.animation_done = self.line + 1 >= len(self.text_list)
+            self.line = 0 if self.animation_done else self.line + 1
+        else:
+            self.counter += 1
+            self.x += letter.get_width()
+
+    def render_all_text(self):
+        for line in self.text_list:
+            for x in line:
+                self.update()
+
+    def get_letters_in_word(self, word):
+        arr = []
+        width = 0
+        space = self.font.render(" ", True, self.text_color)
+        for i in range(len(word)):
+            rendered_letter = self.font.render(word[i:i+1], True, self.text_color)
+            width += rendered_letter.get_width()
+            arr.append(rendered_letter)
+        arr.append(space)
+        width += space.get_width()
+        return [arr, width]
+
+    def get_text_list(self):
+        t_list = [[]]
+        x = 0
+        margin = 16
+        for word in self.text_string.split():
+            letters, width = self.get_letters_in_word(word)
+            x += width
+            if x > self.width - margin:
+                x = 0
+                t_list.append([])
+            t_list[-1].extend(letters)
+        return t_list
+
+    def blitme(self, screen):
+        if self.animation_done == False:
+            self.update()
+        screen.blit(self.image, self.rect)

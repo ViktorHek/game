@@ -2,7 +2,7 @@ import pygame
 
 from page import Page
 from font import Title, SmallTitle, Text
-from button import CheckBoxList
+from button import Button, CheckBoxList
 from text_box import TextBox
 from scroll_bar import ScrollBar
 
@@ -20,14 +20,9 @@ class MiraclesPage(Page):
         self.margin = 8
         self.display_spell = self.db_cantrip[0] 
         self.left_title = Title(self.display_spell["name"], self.left_title_container)
-        self.stats_container = pygame.Rect(
-            (self.left_page.left + self.margin, self.left_title_container.bottom + self.margin), 
-            ((self.left_page.width/2) - (self.margin*2), 100)
-        )
-        self.check_box_container = self.right_page.move(0, self.right_title.rect.height)
         self.spell_list = self.get_spell_list()
         self.check_box_list = CheckBoxList(
-            self.check_box_container,
+            self.right_page.move(0, self.right_title.rect.height),
             self.spell_list
         )
         self.scroll_bar_container = pygame.Rect(
@@ -50,10 +45,6 @@ class MiraclesPage(Page):
                     val.append(spell)
         return val 
 
-    def reset(self):
-        self.db_cantrip = self.get_cantrips()
-        self.render_text()
-
     def get_spell_list(self):
         arr = []
         for value in self.db_cantrip:
@@ -65,16 +56,29 @@ class MiraclesPage(Page):
         
     def render_text(self):
         self.left_title = Title(self.display_spell["name"], self.left_title_container)
-        self.range = SmallTitle(f"Range: {self.display_spell["range"]}")
-        self.casting_time = Text(f"Casting Time: {self.display_spell["casting_time"]}", has_underline=True)
-        self.duration = Text(f"Duration: {self.display_spell["duration"]}", has_underline=True)
-        self.desc_text_box = TextBox(self.display_spell["desc"], self.left_page)
-        self.range.rect.left = self.casting_time.rect.left = self.duration.rect.left = self.left_page.left + self.margin
-        self.range.rect.y = self.left_title_container.bottom + self.margin
-        self.casting_time.rect.y = self.range.rect.bottom + self.margin
-        self.duration.rect.y = self.casting_time.rect.bottom + self.margin
-        self.desc_text_box.rect.y = self.duration.rect.bottom + self.margin
-        self.desc_text_box.rect.centerx = self.left_page.centerx
+        x = self.left_page.left + self.margin
+        y = self.left_title_container.bottom + self.margin
+        btn_con = pygame.Rect((self.left_page.left + self.left_page.width/2, y), (self.left_page.width/2, 32))
+        self.accept_btn = Button('accept', 'accept', btn_con, 'accept')
+        self.range = SmallTitle(
+            f"Range: {self.display_spell["range"]}", 
+            top_left=(x,y)
+        )
+        self.casting_time = Text(
+            f"Casting Time: {self.display_spell["casting_time"]}", 
+            has_underline=True, 
+            top_left=(x, self.range.rect.bottom + self.margin)
+        )
+        self.duration = Text(
+            f"Duration: {self.display_spell["duration"]}", 
+            has_underline=True, 
+            top_left=(x, self.casting_time.rect.bottom + self.margin)
+        )
+        con = pygame.Rect(
+            (x, self.duration.rect.bottom + self.margin), 
+            (self.left_page.width, self.left_page.height - y)    
+        )
+        self.desc_text_box = TextBox(self.display_spell["desc"], con)
 
     def check_click(self):
         id = self.check_box_list.check_click()
@@ -98,3 +102,4 @@ class MiraclesPage(Page):
         screen.blit(self.casting_time.image, self.casting_time.rect)
         screen.blit(self.duration.image, self.duration.rect)
         screen.blit(self.desc_text_box.image, self.desc_text_box.rect)
+        self.accept_btn.blitme(screen)

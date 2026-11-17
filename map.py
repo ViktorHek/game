@@ -11,31 +11,19 @@ class Map:
         self.removed_tiles = []
         self.settings = Settings()
         self.size = size
-        self.collision_grid = []
+        self.world_collision_grid = {}
         self.layers_amount = 0
         self.mobile_collision_grid = {}
-        self.offset = [0,0]
+        self.offset = [0, 0]
         self.tmxdata = load_pygame(src, pixelalpha=True)
         self.tiles, self.objects, self.colliders = self.get_tile_grid()
-        # self.add_world_border()
-
-    def add_world_border(self):
-        # some bug here with "down_border" 
-        w, h = (self.tmxdata.width * size) / 2, (self.tmxdata.height * size) / 2
-        colliders = {
-            "left_border": pygame.Rect((-10, -10), (10, h + 20)),
-            "right_border": pygame.Rect((w + 32, -10), (10, h + 20)),
-            "up_border": pygame.Rect((-10, -10), (w + 20, 10)),
-            "down_border": pygame.Rect((-10, h - 64), (w + 40, 10))
-        }
-        for key, val in colliders.items():
-            self.colliders.append(Collider(val, key))
+        self.show_colliders = False
 
     def check_collision(self, character):
         posible_moves = {
             'right': self.not_colliding('right', character),
             'left': self.not_colliding('left', character),
-            'down': self.not_colliding('down', character),  
+            'down': self.not_colliding('down', character),
             'up': self.not_colliding('up', character)
         }
         return posible_moves
@@ -51,6 +39,9 @@ class Map:
         for col in self.colliders:
             if col.is_colliding(rect):
                 not_colliding = False
+        for char_id, char_rect in self.world_collision_grid.items():
+            if character.id != char_id and r.colliderect(char_rect):
+                not_colliding = False
         return not_colliding
 
     def blit_all_tiles(self, screen):
@@ -63,17 +54,14 @@ class Map:
         for obj in self.objects:
             img = pygame.transform.scale(obj.image, (size, size))
             screen.blit(img, (obj.x, obj.y))
-        # for col in self.colliders:
-        #     if col.is_polygon:
-        #         for dot in col.dots:
-        #             s = pygame.Surface((dot.width, dot.height)).convert()
-        #             s.fill((255,0,0))
-        #             screen.blit(s, (dot.x, dot.y))
-        #     else:
-        #         s = pygame.Surface((col.rect.width, col.rect.height))
-        #         s.fill((255,0,0))
-        #         screen.blit(s, (col.rect.x, col.rect.y))
-    
+        if self.show_colliders:
+            for col in self.colliders:
+                if col.is_polygon:
+                    for dot in col.dots:
+                        pygame.draw.rect(screen, 'red', dot)
+                else:
+                    pygame.draw.rect(screen, 'red', col.rect)
+
     def blit_tile(self, tile, x, y, screen):
         img = tile.image
         if len(tile.frame_images) > 0:
@@ -95,27 +83,26 @@ class Map:
         tiles = self.get_sceleton_grid()
         objects = []
         colliders = []
-        for layer_index, layer in enumerate(self.tmxdata.layers):
-            self.layers_amount = layer_index + 1
+        for index, layer in enumerate(self.tmxdata.layers):
+            self.layers_amount = index + 1
             if isinstance(layer, pytmx.TiledTileLayer):
                 for tile in layer.tiles():
-                    properties = self.tmxdata.get_tile_properties(tile[0], tile[1], layer_index)
-                    properties["frame_images"] = [self.tmxdata.get_tile_image_by_gid(frame.gid) for frame in properties["frames"]]
-                    tile_obj = Tile(tile, properties)
+                    tile_obj = Tile(tile, index, self.tmxdata)
                     tiles[tile[1]][tile[0]]["layers"].append(tile_obj)
             elif isinstance(layer, pytmx.TiledObjectGroup):
-                if layer.name == 'col':
+                if layer.name == 'col' or layer.name == 'collision':
                     for col in layer:
                         colliders.append(Collider(col))
                 else:
                     for obj in layer:
                         img = self.tmxdata.get_tile_image_by_gid(obj.gid)
-                        map_object = MapObject(img, obj)
-                        objects.append(map_object)
+                        if img:
+                            map_object = MapObject(img, obj)
+                            objects.append(map_object)
             else:
                 print("Unrecognized layer type in get_tile_grid()")
         return tiles, objects, colliders
-    
+
     def get_sceleton_grid(self):
         tiles = []
         for y in range(0, self.tmxdata.height):
@@ -124,9 +111,10 @@ class Map:
                 tiles[y].append({"x": x * size, "y": y * size, "layers": []})
         return tiles
 
+
 class Collider:
     def __init__(self, obj, id=-1):
-        self.id = id
+        self.id = obj.id if obj.id else id
         self.obj = obj
         self.rect = pygame.Rect(
             (obj.x * 2, obj.y * 2),
@@ -136,9 +124,11 @@ class Collider:
         if self.is_polygon:
             self.x = min([p[0] for p in obj.points]) * 2
             self.y = min([p[1] for p in obj.points]) * 2
+            self.scale = self.get_scale()
             self.dots = []
             self.get_dots(obj.points)
-            self.rect = pygame.Rect((self.x, self.y), (size, size))
+            self.rect = pygame.Rect(
+                (self.x, self.y), (size * self.scale, size * self.scale))
 
     def move(self, x, y, id):
         if self.id == id:
@@ -154,12 +144,20 @@ class Collider:
                 return True
         return False
 
+    def get_scale(self):
+        max_x = max([p[0] for p in self.obj.points]) * 2
+        scale = int((max_x - self.x) // size)
+        return scale
+
     def get_dots(self, points):
+        s = size * self.scale
         points = [(p[0] * 2, p[1] * 2) for p in points]
-        vartical_down = (self.x, self.y) in points and (self.x + size, self.y + size) in points
-        for val in range(0, size):
-            mod = val if vartical_down else size - val
+        vartical_down = (self.x, self.y) in points and (
+            self.x + s, self.y + s) in points
+        for val in range(0, s):
+            mod = val if vartical_down else s - val
             self.dots.append(pygame.Rect((self.x + mod, self.y + val), (1, 1)))
+
 
 class MapObject(pygame.sprite.Sprite):
     def __init__(self, img, obj):
@@ -174,27 +172,35 @@ class MapObject(pygame.sprite.Sprite):
         else:
             self.id = -1
 
+
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, tmx_tile, properties):
+    def __init__(self, tmx_tile, index, tmxdata):
         super().__init__()
         self.tmx_tile = tmx_tile
         self.x = tmx_tile[0]
         self.y = tmx_tile[1]
         self.image = pygame.transform.scale(tmx_tile[2], (size, size))
-        properties = properties
+        properties = self.get_props(tmx_tile, tmxdata, index)
         self.id = properties["id"]
         self.collision = properties["collision"]
         self.is_overlay = properties["is_overlay"]
         # Types: 'chest', 'summon', 'wall', 'door', 'object', 'ground'
-        self.type = properties["type"] 
-        self.value = properties["value"] 
+        self.type = properties["type"]
+        self.value = properties["value"]
         self.width = str(size)
-        self.height = str(size) 
+        self.height = str(size)
         self.frames = properties["frames"]
         self.frame_images = properties["frame_images"]
         self.frame_counter = 0
         self.frame_index = 0
         self.exist = True
+
+    def get_props(self, tmx_tile, tmxdata, index):
+        properties = tmxdata.get_tile_properties(
+            tmx_tile[0], tmx_tile[1], index)
+        properties["frame_images"] = [
+            tmxdata.get_tile_image_by_gid(frame.gid) for frame in properties["frames"]]
+        return properties
 
     def change_state(self):
         if self.exist:
@@ -208,4 +214,4 @@ class Tile(pygame.sprite.Sprite):
             self.frame_counter = 0
             self.frame_index += 1
         if self.frame_index >= len(self.frame_images):
-            self.frame_index = 0 
+            self.frame_index = 0

@@ -1,37 +1,12 @@
 import pygame
 from settings import Settings
 from character_sprite import CharacterSprite
+from data.weapons import weapons
 
-weapons = {
-    'dagger': {
-        'dice': 4,
-        'dice_amount': 1,
-        'attack_type': 'melee',
-        'damage_type': 'piercing'
-    },
-    'sword': {
-        'dice': 6,
-        'dice_amount': 1,
-        'attack_type': 'melee',
-        'damage_type': 'slashing'
-    },
-    'greatsword': {
-        'dice': 6,
-        'dice_amount': 2,
-        'attack_type': 'melee',
-        'damage_type': 'slashing'
-    },
-    'shortbow': {
-        'dice': 6,
-        'dice_amount': 1,
-        'attack_type': 'range',
-        'damage_type': 'piercing'
-    },
-}
-
-class Character():
+class Character:
     def __init__(self, pos=(0,0), type="human"):
         self.type = type
+        self.name = "plaseholder"
         self.settings = Settings()
         self.size = self.settings.tile_size
         self.character_sprite = CharacterSprite(pos, type)
@@ -79,9 +54,15 @@ class Character():
         y = int((self.rect.y + (self.size / 2)) / self.size)
         return [x, y]
 
-    def take_damage(self, damage, type='bludgeoning', delay=0):
+    def get_collision_rect(self):
+        return pygame.Rect((self.rect.x, self.rect.y), (self.size, self.size))
+
+    def get_stat_mod(self, stat):
+        return (stat - 10) // 2
+
+    def take_damage(self, damage, delay=0):
         self.hp -= damage
-        self.character_sprite.queue.append(delay)
+        self.character_sprite.queue_delay = delay
         self.character_sprite.queue.append('hurt')
         if self.hp <= 0:
             self.hp = 0
@@ -124,11 +105,15 @@ class Character():
         if self.moving_up and posible_moves['up']:
             self.rect.y -= self.speed
         if self.moving_right or self.moving_left or self.moving_up or self.moving_down:
-            self.change_action('walk')
+            self.character_sprite.change_action('walk')
         else:
             if self.character_sprite.action == 'walk':
-                self.change_action('idle')
+                self.character_sprite.change_action('idle')
         self.coordinates = self.get_coordinates()
+        self.update_sprite()
+
+    def update_sprite(self):
+        pass
 
     def blitme(self, screen):
         self.character_sprite.blitme(screen, self.rect)

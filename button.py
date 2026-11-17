@@ -1,6 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 from font import Text, PlainText
+from image import Image
 from tool_tip import ToolTip
 from settings import Settings
 
@@ -47,6 +48,36 @@ class BaseButton(Sprite):
         #     self.tool_tip.blitme(screen)
 
 class Button(BaseButton):
+    def __init__(self, id, text, parent, value, tool_tip=""):
+        super().__init__(id, text, parent, value, tool_tip)
+        self.surf = pygame.Surface((self.text.rect.width + 32, 48), pygame.SRCALPHA).convert_alpha()
+        self.rect = self.surf.get_rect()
+        if parent:
+            self.rect.center = parent.center
+        bg = self.render_bg(self.surf.get_width())
+        content = Text(text, parent=bg.get_rect())
+        self.surf.blit(bg, (0,0))
+        self.surf.blit(content.text, content.relative_rect)
+        self.surf_active = self.surf.copy()
+        line = Image("assets/ui_sprites/Sprites/Content/5 Holders/19.png")
+        self.surf_active.blit(line.image, line.image.get_rect(
+            centerx = self.rect.centerx, 
+            bottom = self.rect.bottom
+        ))
+    
+    def render_bg(self, width):
+        start = Image("assets/ui_sprites/Sprites/Content/5 Holders/12.png")
+        end = Image("assets/ui_sprites/Sprites/Content/5 Holders/14.png")
+        surf = pygame.Surface((width, start.height), pygame.SRCALPHA).convert_alpha()
+        surf.blit(start.image, (0,0))
+        x = 8
+        while x < surf.get_width() - end.width:
+            surf.blit(end.image, (x,0))
+            x += end.width
+        surf.blit(end.image, (surf.get_width() - end.width, 0))
+        return surf
+
+class AltButton(BaseButton):
     def __init__(self, id, text, parent, value, tool_tip=""):
         super().__init__(id, text, parent, value, tool_tip=tool_tip)
         self.img_base = pygame.image.load('assets/button.png').convert_alpha()

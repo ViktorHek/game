@@ -1,17 +1,18 @@
 import pygame
 import json
+import math
 
 from character import Character
 
 class Player(Character):
     def __init__(self, pos=[13, 8]):
         super().__init__(pos, 'player')
-        self.id = 'player'
         self.rect.x = self.size * pos[0]
         self.rect.y = self.size * pos[1]
         self.speed = 4
         self.moving_to = [self.rect.x, self.rect.y]
         self.data = PlayerData()
+        self.id = self.data.name
         self.max_hp = self.data.max_hp
         self.hp = self.data.max_hp
         self.steps_amount = self.data.speed // 10
@@ -35,6 +36,7 @@ class Player(Character):
 
 class PlayerData:
     def __init__(self):
+        self.data = None
         self.name = ''
         self.age = 0
         self.gender = None
@@ -55,6 +57,7 @@ class PlayerData:
     def load(self):
         with open("save/player.json", "r") as db:
             data = json.load(db)
+        self.data = data
         self.name = data["general"]["name"]
         self.age = data["general"]["age"]
         self.gender = data["general"]["gender"]
@@ -69,19 +72,14 @@ class PlayerData:
         self.proficiencies = data["proficiencies"]
         self.miracles = data["miracles"]
         self.stats = PlayerStats(data["stats"])
-        self.max_hp = self.hit_die // 2 + 1 + self.stats.constitution_modifier
+        con_mod = math.floor((self.stats.con - 10) / 2)
+        self.max_hp = self.hit_die // 2 + 1 + con_mod
 
 class PlayerStats:
     def __init__(self, stats):
-        self.strength = stats["strength"]
-        self.wisdom = stats["wisdom"]
-        self.constitution = stats["constitution"]
-        self.dexterity = stats["dexterity"]
-        self.intelligence = stats["intelligence"]
-        self.charisma = stats["charisma"]
-        self.strength_modifier = stats["strength_modifier"]
-        self.wisdom_modifier = stats["wisdom_modifier"]
-        self.constitution_modifier = stats["constitution_modifier"]
-        self.dexterity_modifier = stats["dexterity_modifier"]
-        self.intelligence_modifier = stats["intelligence_modifier"]
-        self.charisma_modifier = stats["charisma_modifier"]
+        self.str = stats["strength"]
+        self.wis = stats["wisdom"]
+        self.con = stats["constitution"]
+        self.dex = stats["dexterity"]
+        self.int = stats["intelligence"]
+        self.cha = stats["charisma"]
